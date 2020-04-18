@@ -8,7 +8,7 @@ learning to unjumble as a pretraining objective for RoBERTa
 - roberta score on CoLA task: see [`notebooks/roberta_cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks/roberta_cola.ipynb)
 - roberta score on SST task: see [`notebooks/roberta_sst.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks/roberta_sst.ipynb)
 
-## MLM Loss
+## Train with MLM Loss
 
 ```cmd
 # make sure transformers version is 2.7.0
