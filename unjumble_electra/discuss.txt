@@ -37,3 +37,8 @@ approaches to resolve the issues:
         shuffle the subwords now in such a way that the subwords for a word stay together
         even after shuffling.
     (2) accept that the prob of electra loss mask is not equivalent to shuffling prob
+
+
+# TODO: check that loss is decreasing for mlm training, electra loss training (maybe using tensorboard)
+# TODO: check if we can use TPU and speed up training
+# TODO: shuffling after tokenization so that subwords for a word remain together
