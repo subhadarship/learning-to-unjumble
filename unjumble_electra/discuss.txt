@@ -1,0 +1,39 @@
+['a', 'b', 'c', '<pad>']
+['a', 'c', '<pad>', '<pad>']
+['c', 'b', 'c', 'a']
+
+att_mask = [
+    [1, 1, 1, 0],
+    [1, 1, 0, 0],
+    [1, 1, 1, 1]
+]
+
+
+the wind is blowing gently .  ||    th e wi nd is bl ow ing ge nt ly .
+
+jumbled: the is wind blowing gently.    ||  th e is wi nd bl ow ing ge nt ly .
+
+
+orig: [3, 1, 2, 9, 4]                   [3, 1, 2, 9, 4]
+jumbled: [3, 2, 1, 9, 4]                [2, 2, 1, 9, 4]
+electra_target: [0, 1, 1, 0, 0]         [1, 1, 1, 0, 0]
+
+
+#####
+OPTION A: shuffle before tokenization
+probs:
+    (1) lengths of subwords before and after shuffling may differ
+    (2) the same subwords may not appear in the subwords for the jumbled sentence
+approaches to resolve the issues:
+    (1) do not use samples where issue (1) occurs
+    (2) accept that the prob of electra loss mask is not equivalent to shuffling prob
+
+OPTION B: shuffle after tokenization
+probs:
+    (1) we do not want to shuffle on the subword level in the first place!
+
+approaches to resolve the issues:
+    (1) after tokenization, we keep track of which word each subword belongs.
+        shuffle the subwords now in such a way that the subwords for a word stay together
+        even after shuffling.
+    (2) accept that the prob of electra loss mask is not equivalent to shuffling prob
