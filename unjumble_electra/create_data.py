@@ -14,26 +14,17 @@ def get_mapping_from_subwords(subwords):
 
 
 def scramble(seq,mapping,prob=0.15):
-    seq_to_shuffle=['<unjumb>'.join([c for i, c in group]) for key, group in groupby(zip(mapping, seq), itemgetter(0))]
-    #print(seq_to_shuffle)
+    seq_to_shuffle=['<unjumble>'.join([c for i, c in group]) for key, group in groupby(zip(mapping, seq), itemgetter(0))]
     seq_to_shuffle = np.array(seq_to_shuffle)
-    seq = np.array(seq)
-    #print(seq)
     num_permute = int(len(list(set(mapping)))*prob)
     full_permutation = np.random.permutation(len(seq_to_shuffle))
-    #print(full_permutation)
     inverse_full_permutation = np.argsort(full_permutation)
-    #print(inverse_full_permutation)
     partial_permutation = np.random.permutation(num_permute)
-    #print(partial_permutation)
     seq_to_shuffle = seq_to_shuffle[full_permutation]
-    #print(seq)
     seq_to_shuffle = np.concatenate(
         (seq_to_shuffle[:num_permute][partial_permutation], seq_to_shuffle[num_permute:]))
-    #print(seq)
     seq_to_shuffle = seq_to_shuffle[inverse_full_permutation]
-    #print(seq)
-    seq_to_shuffle=[s.split('<unjumb>') for s in seq_to_shuffle]
+    seq_to_shuffle=[s.split('<unjumble>') for s in seq_to_shuffle]
     seq_to_shuffle = [y for x in seq_to_shuffle for y in x]
     return seq_to_shuffle
 
