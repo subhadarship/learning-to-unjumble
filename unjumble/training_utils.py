@@ -21,10 +21,10 @@ try:
 except ImportError:
     from tensorboardX import SummaryWriter
 
-logger = logging.getLogger(__name__)
-
 from data_utils import mask_tokens, load_and_cache_examples
 from checkpoint_utils import _rotate_checkpoints
+
+logger = logging.getLogger(__name__)
 
 
 def set_seed(args):
