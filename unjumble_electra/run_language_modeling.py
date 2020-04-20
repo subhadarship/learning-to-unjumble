@@ -71,6 +71,11 @@ from transformers.file_utils import add_start_docstrings_to_callable
 
 from transformers.activations import get_activation
 
+from data_utils import (
+    get_mapping_from_subwords,
+    scramble
+)
+
 
 class ElectraDiscriminatorPredictions(torch.nn.Module):
     """Prediction module for the discriminator, made up of two dense layers."""
@@ -271,10 +276,136 @@ class LineByLineTextDataset(Dataset):
         return torch.tensor(self.examples[i], dtype=torch.long)
 
 
+class LineByLineTextDatasetForJumbled(Dataset):
+    def __init__(self, tokenizer: PreTrainedTokenizer, args,
+                 file_path: str,
+                 block_size=512,
+                 prob=0.15):
+        assert os.path.isfile(file_path)
+        # Here, we do not cache the features, operating under the assumption
+        # that we will soon use fast multithreaded tokenizers from the
+        # `tokenizers` repo everywhere =)
+        logger.info("Creating features from dataset file at %s", file_path)
+
+        with open(file_path, encoding="utf-8") as f:
+            self.lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
+
+        # tokenize
+        self.tokens = [
+            tokenizer.tokenize(
+                line, add_special_tokens=True, max_length=block_size
+            ) for line in tqdm(self.lines)
+        ]
+
+        self.token_ids = [
+            [tokenizer.bos_token_id] +
+            tokenizer.convert_tokens_to_ids(token) +
+            [tokenizer.eos_token_id] \
+            for token in self.tokens
+        ]  # token here is a set of tokens for a sequence actually
+
+        # obtain mapping lists
+        self.mapping_lists = [get_mapping_from_subwords(token)
+                              for token in tqdm(self.tokens)]
+
+        # jumble
+        self.jumbled_tokens = [
+            scramble(
+                token, mapping_list, prob
+            )
+            for token, mapping_list in
+            tqdm(zip(self.tokens, self.mapping_lists), total=len(self.tokens))
+        ]
+
+        # obtain jumbled token ids
+        self.jumbled_tokens_ids = [
+            [tokenizer.bos_token_id] +
+            tokenizer.convert_tokens_to_ids(jumbled_tokens) +
+            [tokenizer.eos_token_id] \
+            for jumbled_tokens in self.jumbled_tokens
+        ]
+
+    def __len__(self):
+        return len(self.lines)
+
+    def __getitem__(self, i):
+        return (
+            torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
+            torch.tensor(self.tokens_ids[i], dtype=torch.long)
+        )
+
+
+class LineByLineTextDatasetForElectra(Dataset):
+    def __init__(self, tokenizer: PreTrainedTokenizer, args,
+                 file_path: str,
+                 block_size=512,
+                 prob=0.15):
+        assert os.path.isfile(file_path)
+        # Here, we do not cache the features, operating under the assumption
+        # that we will soon use fast multithreaded tokenizers from the
+        # `tokenizers` repo everywhere =)
+        logger.info("Creating features from dataset file at %s", file_path)
+
+        with open(file_path, encoding="utf-8") as f:
+            self.lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
+
+        # tokenize
+        self.tokens = [
+            tokenizer.tokenize(
+                line, add_special_tokens=True, max_length=block_size
+            ) for line in tqdm(self.lines)
+        ]
+
+        self.token_ids = [
+            [tokenizer.bos_token_id] +
+            tokenizer.convert_tokens_to_ids(token) +
+            [tokenizer.eos_token_id] \
+            for token in self.tokens
+        ]  # token here is a set of tokens for a sequence actually
+
+        # obtain mapping lists
+        self.mapping_lists = [get_mapping_from_subwords(token)
+                              for token in tqdm(self.tokens)]
+
+        # jumble
+        self.jumbled_tokens = [
+            scramble(
+                token, mapping_list, prob
+            )
+            for token, mapping_list in
+            tqdm(zip(self.tokens, self.mapping_lists), total=len(self.tokens))
+        ]
+
+        # obtain jumbled token ids
+        self.jumbled_tokens_ids = [
+            [tokenizer.bos_token_id] +
+            tokenizer.convert_tokens_to_ids(jumbled_tokens) +
+            [tokenizer.eos_token_id] \
+            for jumbled_tokens in self.jumbled_tokens
+        ]
+
+        # obtain label ids for electra loss
+        self.labels = np.array(
+            np.array(self.token_ids) == np.array(self.jumbled_tokens_ids),
+            dtype=np.int
+        )
+
+    def __len__(self):
+        return len(self.lines)
+
+    def __getitem__(self, i):
+        return (
+            torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
+            torch.tensor(self.labels[i], dtype=torch.long)
+        )
+
+
 def load_and_cache_examples(args, tokenizer, evaluate=False):
     file_path = args.eval_data_file if evaluate else args.train_data_file
-    if args.line_by_line:
+    if args.line_by_line and args.mlm:
         return LineByLineTextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
+    if args.line_by_line and args.electra_loss:
+        return LineByLineTextDatasetForElectra(tokenizer, args, file_path=file_path, block_size=args.block_size)
     else:
         return TextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
 
@@ -323,7 +454,8 @@ def _rotate_checkpoints(args, checkpoint_prefix="checkpoint", use_mtime=False) -
         shutil.rmtree(checkpoint)
 
 
-def mask_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> Tuple[torch.Tensor, torch.Tensor]:
+# TODO: rename after making sure that this is not used
+def mask_tokens_______(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> Tuple[torch.Tensor, torch.Tensor]:
     """ Prepare masked tokens inputs/labels for masked language modeling: 80% MASK, 10% random, 10% original. """
 
     if tokenizer.mask_token is None:
@@ -364,10 +496,17 @@ def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedToke
 
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
 
-    def collate(examples: List[torch.Tensor]):
+    # TODO
+    def collate(examples):
         if tokenizer._pad_token is None:
-            return pad_sequence(examples, batch_first=True)
-        return pad_sequence(examples, batch_first=True, padding_value=tokenizer.pad_token_id)
+            return (
+                pad_sequence(examples[0], batch_first=True), \
+                pad_sequence(examples[1], batch_first=True)
+            )
+        return (
+            pad_sequence(examples[0], batch_first=True, padding_value=tokenizer.pad_token_id),
+            pad_sequence(examples[1], batch_first=True, padding_value=tokenizer.pad_token_id)
+        )
 
     train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
     train_dataloader = DataLoader(
@@ -473,11 +612,22 @@ def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedToke
                 steps_trained_in_current_epoch -= 1
                 continue
 
-            inputs, labels = mask_tokens(batch, tokenizer, args) if args.mlm else (batch, batch)
+            if args.mlm:
+                inputs, labels = mask_tokens(batch, tokenizer, args)
+            elif args.electra_loss:
+                inputs, labels = batch
+            else:
+                inputs, labels = batch, batch
+
             inputs = inputs.to(args.device)
             labels = labels.to(args.device)
             model.train()
-            outputs = model(inputs, masked_lm_labels=labels) if args.mlm else model(inputs, labels=labels)
+
+            if args.mlm:
+                outputs = model(inputs, masked_lm_labels=labels)
+            else:  # this includes args.electra_loss case
+                outputs = model(inputs, labels=labels)
+
             loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
 
             if args.n_gpu > 1:
@@ -583,12 +733,23 @@ def evaluate(args, model: PreTrainedModel, tokenizer: PreTrainedTokenizer, prefi
     model.eval()
 
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
-        inputs, labels = mask_tokens(batch, tokenizer, args) if args.mlm else (batch, batch)
+
+        if args.mlm:
+            inputs, labels = mask_tokens(batch, tokenizer, args)
+        elif args.electra_loss:
+            inputs, labels = batch
+        else:
+            inputs, labels = batch, batch
+
         inputs = inputs.to(args.device)
         labels = labels.to(args.device)
 
         with torch.no_grad():
-            outputs = model(inputs, masked_lm_labels=labels) if args.mlm else model(inputs, labels=labels)
+            if args.mlm:
+                outputs = model(inputs, masked_lm_labels=labels)
+            else:  # this also includes args.electra_loss
+                outputs = model(inputs, labels=labels)
+
             lm_loss = outputs[0]
             eval_loss += lm_loss.mean().item()
         nb_eval_steps += 1

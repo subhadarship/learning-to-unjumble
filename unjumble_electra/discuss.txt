@@ -42,3 +42,19 @@ approaches to resolve the issues:
 # TODO: check that loss is decreasing for mlm training, electra loss training (maybe using tensorboard)
 # TODO: check if we can use TPU and speed up training
 # TODO: shuffling after tokenization so that subwords for a word remain together
+
+
+mlm training:
+labels = [['a', 'b', 'd', 'c']]   | ids =  [[3, -100, 6, -100]]
+inputs = [['<mask>', 'b', '<mask>', 'c']]   |  ids =   [[3, 5, 3, 10]] (3 is mask token id)
+
+
+
+batch_size = 2
+
+[[ti_1, tl_1], [ti_2, tl_2]]  ## [t_1, t_2]
+
+[t1, t2]
+
+[2, 3 ,4]  [1, 0, 1]  -> [2, 3, 4, 1, 0, 1]  -> [2, 3, 4, 1, 0, 1, 100, 100] | [2, 3, 4, 100, 1, 0, 1, 100]
+[2, 3 ,4, 5]  [1, 0, 1, 0]  -> [2, 3, 4, 5, 1, 0, 1, 0]

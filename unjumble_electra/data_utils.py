@@ -1,3 +1,6 @@
+from itertools import groupby
+from operator import itemgetter
+
 import numpy as np
 from tqdm import tqdm
 from transformers import RobertaTokenizer
@@ -13,10 +16,11 @@ def get_mapping_from_subwords(subwords):
     return mapping_list
 
 
-def scramble(seq,mapping,prob=0.15):
-    seq_to_shuffle=['<unjumble>'.join([c for i, c in group]) for key, group in groupby(zip(mapping, seq), itemgetter(0))]
+def scramble(seq, mapping, prob=0.15):
+    seq_to_shuffle = ['<unjumble>'.join([c for i, c in group]) for key, group in
+                      groupby(zip(mapping, seq), itemgetter(0))]
     seq_to_shuffle = np.array(seq_to_shuffle)
-    num_permute = int(len(list(set(mapping)))*prob)
+    num_permute = int(len(list(set(mapping))) * prob)
     full_permutation = np.random.permutation(len(seq_to_shuffle))
     inverse_full_permutation = np.argsort(full_permutation)
     partial_permutation = np.random.permutation(num_permute)
@@ -24,7 +28,7 @@ def scramble(seq,mapping,prob=0.15):
     seq_to_shuffle = np.concatenate(
         (seq_to_shuffle[:num_permute][partial_permutation], seq_to_shuffle[num_permute:]))
     seq_to_shuffle = seq_to_shuffle[inverse_full_permutation]
-    seq_to_shuffle=[s.split('<unjumble>') for s in seq_to_shuffle]
+    seq_to_shuffle = [s.split('<unjumble>') for s in seq_to_shuffle]
     seq_to_shuffle = [y for x in seq_to_shuffle for y in x]
     return seq_to_shuffle
 
@@ -62,6 +66,30 @@ if __name__ == "__main__":
     print(lines[20])
     print(tokens[20])
     print(get_mapping_from_subwords(tokens[20]))
+
+    mapping_lists = [get_mapping_from_subwords(token) for token in tqdm(tokens)]
+    jumbled_tokens_50p = [
+        scramble(
+            token, mapping_list, prob=0.0
+        )
+        for token, mapping_list in
+        tqdm(zip(tokens, mapping_lists), total=len(tokens))
+    ]
+
+    jumbled_tokens_ids_50p = [
+        [tokenizer.bos_token_id] +
+        tokenizer.convert_tokens_to_ids(jumbled_tokens) +
+        [tokenizer.eos_token_id] \
+        for jumbled_tokens in jumbled_tokens_50p
+    ]
+
+    print(jumbled_tokens_ids_50p[20])
+    print(tokenizer.batch_encode_plus(
+        lines,
+        add_special_tokens=True,
+        max_length=block_size
+    )["input_ids"][20])
+
     """
     print(len(token_ids))
     print(token_ids[0])
