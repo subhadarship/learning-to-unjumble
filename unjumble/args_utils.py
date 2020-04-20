@@ -15,6 +15,12 @@ def get_args():
         help="The output directory where the model predictions and checkpoints will be written.",
     )
     parser.add_argument(
+        "--tensorboard_log_dir",
+        type=str,
+        default=None,
+        help="Tensorboard log dir",
+    )
+    parser.add_argument(
         "--model_type", type=str, required=True, help="The model architecture to be trained or fine-tuned.",
     )
 
