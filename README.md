@@ -18,6 +18,8 @@ learning to unjumble as a pretraining objective for RoBERTa
 # make sure transformers version is 2.7.0
 !pip install transformers==2.7.0
 
+!cd ./unjumble
+
 # download data
 from torchtext.datasets import WikiText103
 WikiText103.download('./data')
@@ -32,7 +34,36 @@ python run_language_modeling.py \
 --save_steps 2000 \
 --per_gpu_train_batch_size 8 \
 --evaluate_during_training \
---train_data_file data/wikitext-103/wikitext-103/wiki.valid.tokens \
+--train_data_file data/wikitext-103/wikitext-103/wiki.train.tokens \
+--line_by_line \
+--eval_data_file data/wikitext-103/wikitext-103/wiki.test.tokens \
+--model_name_or_path roberta-base
+
+```
+
+## Train with ELECTRA Loss
+
+```cmd
+# make sure transformers version is 2.7.0
+!pip install transformers==2.7.0
+
+!cd ./unjumble
+
+# download data
+from torchtext.datasets import WikiText103
+WikiText103.download('./data')
+
+# run roberta training with MLM loss
+python run_language_modeling.py \
+--output_dir ./models/roberta_mlm \
+--model_type roberta \
+--electra_loss \
+--do_train \
+--do_eval \
+--save_steps 2000 \
+--per_gpu_train_batch_size 8 \
+--evaluate_during_training \
+--train_data_file data/wikitext-103/wikitext-103/wiki.train.tokens \
 --line_by_line \
 --eval_data_file data/wikitext-103/wikitext-103/wiki.test.tokens \
 --model_name_or_path roberta-base
