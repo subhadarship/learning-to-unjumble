@@ -12,8 +12,8 @@ learning to unjumble as a pretraining objective for RoBERTa
 - roberta score on WNLI task: see [`notebooks_roberta/roberta wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks_roberta/roberta%20wnli.ipynb)
 
 ## BASELINE using ELECTRA
+- electra score on QNLI task: see [`notebooks_electra/electra_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_electra/electra_qnli.ipynb)
 - electra score on RTE task: see [`notebooks_electra/electra_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_electra/electra_rte.ipynb)
-
 
 ## Train with MLM Loss
 
