@@ -2,7 +2,7 @@
 
 learning to unjumble as a pretraining objective for RoBERTa
 
-## BASELINE
+## BASELINE using RoBERTa
 - roberta score on QNLI task: see [`notebooks_roberta/roberta_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_qnli.ipynb)
 - roberta score on RTE task: see [`notebooks_roberta/roberta_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_rte.ipynb)
 - roberta score on CoLA task: see [`notebooks_roberta/roberta_cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_cola.ipynb)
