@@ -3,13 +3,13 @@
 learning to unjumble as a pretraining objective for RoBERTa
 
 ## BASELINE
-- roberta score on QNLI task: see [`notebooks/roberta_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks/roberta_qnli.ipynb)
-- roberta score on RTE task: see [`notebooks/roberta_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks/roberta_rte.ipynb)
-- roberta score on CoLA task: see [`notebooks/roberta_cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks/roberta_cola.ipynb)
-- roberta score on SST task: see [`notebooks/roberta_sst.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks/roberta_sst.ipynb)
-- roberta score on MRPC task: see [`notebooks/Roberta_MRPC_Baseline.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks/Roberta_MRPC_Baseline.ipynb)
-- roberta score on STS-B task: see [`notebooks/Roberta_STS_B_Baseline.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks/Roberta_STS_B_Baseline.ipynb)
-- roberta score on WNLI task: see [`notebooks/roberta wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks/roberta%20wnli.ipynb)
+- roberta score on QNLI task: see [`notebooks_roberta/roberta_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_qnli.ipynb)
+- roberta score on RTE task: see [`notebooks_roberta/roberta_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_rte.ipynb)
+- roberta score on CoLA task: see [`notebooks_roberta/roberta_cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_cola.ipynb)
+- roberta score on SST task: see [`notebooks_roberta/roberta_sst.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_roberta/roberta_sst.ipynb)
+- roberta score on MRPC task: see [`notebooks_roberta/Roberta_MRPC_Baseline.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks_roberta/Roberta_MRPC_Baseline.ipynb)
+- roberta score on STS-B task: see [`notebooks_roberta/Roberta_STS_B_Baseline.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks_roberta/Roberta_STS_B_Baseline.ipynb)
+- roberta score on WNLI task: see [`notebooks_roberta/roberta wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks_roberta/roberta%20wnli.ipynb)
 
 ## BASELINE using ELECTRA
 - electra score on RTE task: see [`notebooks_electra/electra_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_electra/electra_rte.ipynb)
