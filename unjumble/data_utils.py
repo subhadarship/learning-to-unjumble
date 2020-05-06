@@ -276,7 +276,8 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
     if args.line_by_line and args.mlm:
         return LineByLineTextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
     if args.line_by_line and args.electra_loss:
-        return LineByLineTextDatasetForElectra(tokenizer, args, file_path=file_path, block_size=args.block_size)
+        return LineByLineTextDatasetForElectra(tokenizer, args, file_path=file_path, block_size=args.block_size,
+                                               prob=args.prob)
     else:
         return TextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
 

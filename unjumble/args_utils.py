@@ -150,6 +150,7 @@ def get_args():
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
     parser.add_argument("--server_ip", type=str, default="", help="For distant debugging.")
     parser.add_argument("--server_port", type=str, default="", help="For distant debugging.")
+    parser.add_argument("--prob", type=float, default=0.15, help="probability of jumbling words")
     args = parser.parse_args()
 
     return args
