@@ -173,8 +173,10 @@ class LineByLineTextDatasetForJumbled(Dataset):
         ]  # token here is a set of tokens for a sequence actually
 
         # obtain mapping lists
-        self.mapping_lists = [get_mapping_from_subwords(token)
-                              for token in tqdm(self.tokens)]
+        self.mapping_lists = [
+            get_mapping_from_subwords(token)
+            for token in tqdm(self.tokens)
+        ]
 
         # jumble
         self.jumbled_tokens = [
@@ -199,7 +201,7 @@ class LineByLineTextDatasetForJumbled(Dataset):
     def __getitem__(self, i):
         return (
             torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
-            torch.tensor(self.tokens_ids[i], dtype=torch.long)
+            torch.tensor(self.token_ids[i], dtype=torch.long)
         )
 
 
