@@ -44,7 +44,7 @@ python run_language_modeling.py \
 
 ```
 
-## Train with ELECTRA Loss
+## Train with token-modification-discrimination head
 
 ```cmd
 # make sure transformers version is 2.7.0
@@ -56,9 +56,9 @@ python run_language_modeling.py \
 from torchtext.datasets import WikiText103
 WikiText103.download('./data')
 
-# run roberta training with MLM loss
+# run roberta training with token-modification-discrimination head
 python run_language_modeling.py \
---output_dir ./models/roberta_mlm \
+--output_dir ./models/roberta_token_mod_disc_head \
 --model_type roberta \
 --electra_loss \
 --do_train \
@@ -70,5 +70,7 @@ python run_language_modeling.py \
 --line_by_line \
 --eval_data_file data/wikitext-103/wikitext-103/wiki.test.tokens \
 --model_name_or_path roberta-base
+--prob 0.15
+--logging_steps 100
 
 ```
