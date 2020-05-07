@@ -35,7 +35,12 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
-def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> Tuple[int, float]:
+def train(
+        args,
+        train_dataset,
+        model: PreTrainedModel,
+        tokenizer: PreTrainedTokenizer
+) -> Tuple[int, float]:
     """ Train the model """
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter(args.tensorboard_log_dir)
@@ -131,6 +136,7 @@ def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedToke
     global_step = 0
     epochs_trained = 0
     steps_trained_in_current_epoch = 0
+
     # Check if continuing training from a checkpoint
     if args.model_name_or_path and os.path.exists(args.model_name_or_path):
         try:
@@ -183,9 +189,6 @@ def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedToke
                 outputs = model(inputs, labels=labels)
 
             loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
-
-            # print loss
-            logger.info(f"  Loss = {loss.item()}")
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
@@ -271,7 +274,7 @@ def evaluate(args, model: PreTrainedModel, tokenizer: PreTrainedTokenizer, prefi
         if tokenizer._pad_token is None:
             if args.electra_loss:
                 return (
-                    pad_sequence([example[0] for example in examples], batch_first=True), \
+                    pad_sequence([example[0] for example in examples], batch_first=True),
                     pad_sequence([example[1] for example in examples], batch_first=True)
                 )
             else:  # this includes args.mlm
