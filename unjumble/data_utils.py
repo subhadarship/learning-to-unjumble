@@ -215,25 +215,42 @@ class LineByLineTextDatasetForElectra(Dataset):
         logger.info("Creating features from dataset file at %s", file_path)
 
         with open(file_path, encoding="utf-8") as f:
-            self.lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
+            self.lines = [
+                line for line in tqdm(
+                    f.read().splitlines(),
+                    desc='read from file'
+                )
+                if (len(line) > 0 and not line.isspace())
+            ]
 
         # tokenize
         self.tokens = [
             tokenizer.tokenize(
-                line, add_special_tokens=True, max_length=block_size
-            ) for line in tqdm(self.lines)
+                line, add_special_tokens=True
+            ) for line in tqdm(self.lines, desc='tokenize')
         ]
 
+        # filter samples with number of tokens <= block_size - 2
+        # (reserve 2 tokens for start and end tokens)
+        self.tokens = list(
+            filter(lambda x: len(x) <= block_size - 2,
+                   tqdm(self.tokens, desc='filter'))
+        )
+        print(max(len(li) for li in self.tokens))
+
+        # obtain token ids
         self.token_ids = [
             [tokenizer.bos_token_id] +
             tokenizer.convert_tokens_to_ids(token) +
             [tokenizer.eos_token_id] \
-            for token in self.tokens
+            for token in tqdm(self.tokens, desc='token ids')
         ]  # token here is a set of tokens for a sequence actually
 
         # obtain mapping lists
-        self.mapping_lists = [get_mapping_from_subwords(token)
-                              for token in tqdm(self.tokens)]
+        self.mapping_lists = [
+            get_mapping_from_subwords(token)
+            for token in tqdm(self.tokens, desc='mapping')
+        ]
 
         # jumble
         self.jumbled_tokens = [
@@ -241,7 +258,11 @@ class LineByLineTextDatasetForElectra(Dataset):
                 token, mapping_list, prob
             )
             for token, mapping_list in
-            tqdm(zip(self.tokens, self.mapping_lists), total=len(self.tokens))
+            tqdm(
+                zip(self.tokens, self.mapping_lists),
+                total=len(self.tokens),
+                desc='jumble'
+            )
         ]
 
         # obtain jumbled token ids
@@ -249,12 +270,17 @@ class LineByLineTextDatasetForElectra(Dataset):
             [tokenizer.bos_token_id] +
             tokenizer.convert_tokens_to_ids(jumbled_tokens) +
             [tokenizer.eos_token_id] \
-            for jumbled_tokens in self.jumbled_tokens
+            for jumbled_tokens in
+            tqdm(self.jumbled_tokens, desc='jumbled token ids')
         ]
 
         # obtain label ids for electra loss
         self.labels = []
-        for token_id, jumbled_token_id in zip(self.token_ids, self.jumbled_tokens_ids):
+        for token_id, jumbled_token_id in tqdm(
+                zip(self.token_ids, self.jumbled_tokens_ids),
+                total=len(self.token_ids),
+                desc='labels'
+        ):
             self.labels.append(
                 np.array(
                     np.array(token_id) == np.array(jumbled_token_id),
@@ -284,63 +310,23 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
 
 if __name__ == "__main__":
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-    filepath = './data/wikitext-103/wikitext-103/wiki.valid.tokens'
+    filepath = './data/wikitext-103/wikitext-103/wiki.train.tokens'
     block_size = 512
 
-    with open(filepath, 'r', encoding='utf-8') as f:
-        lines = [
-            line for line in tqdm(f.read().splitlines())
-            if (len(line) > 0 and not line.isspace())
-        ]
-
-    lines_words = [line.split() for line in tqdm(lines)]
-    """
-    jumble after tokenization OR jumble before tokenization
-    our preference: jumble after tokenization
-    """
-
-    tokens = [
-        tokenizer.tokenize(
-            line, add_special_tokens=True, max_length=block_size
-        ) for line in tqdm(lines)
-    ]
-
-    """
-    token_ids = tokenizer.batch_encode_plus(
-        lines, add_special_tokens=True, max_length=block_size
+    dataset = LineByLineTextDatasetForElectra(
+        tokenizer,
+        None,
+        filepath,
+        block_size,
+        0.15
     )
-    """
 
-    print(len(lines))
-    print(lines[20])
-    print(tokens[20])
-    print(get_mapping_from_subwords(tokens[20]))
-
-    mapping_lists = [get_mapping_from_subwords(token) for token in tqdm(tokens)]
-    jumbled_tokens_50p = [
-        scramble(
-            token, mapping_list, prob=0.0
-        )
-        for token, mapping_list in
-        tqdm(zip(tokens, mapping_lists), total=len(tokens))
-    ]
-
-    jumbled_tokens_ids_50p = [
-        [tokenizer.bos_token_id] +
-        tokenizer.convert_tokens_to_ids(jumbled_tokens) +
-        [tokenizer.eos_token_id] \
-        for jumbled_tokens in jumbled_tokens_50p
-    ]
-
-    print(jumbled_tokens_ids_50p[20])
-    print(tokenizer.batch_encode_plus(
-        lines,
-        add_special_tokens=True,
-        max_length=block_size
-    )["input_ids"][20])
-
-    """
-    print(len(token_ids))
-    print(token_ids[0])
-    print(tokenizer.decode([0, 5457, 11858, 42292, 20577, 3916, 687, 5457, 2]))
-    """
+    for item in [
+        dataset.tokens,
+        dataset.token_ids,
+        dataset.jumbled_tokens,
+        dataset.jumbled_tokens_ids,
+        dataset.labels,
+        dataset.mapping_lists,
+    ]:
+        print(max(len(li) for li in item))
