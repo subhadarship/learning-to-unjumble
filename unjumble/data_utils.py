@@ -238,7 +238,6 @@ class LineByLineTextDatasetForElectra(Dataset):
             filter(lambda x: len(x) <= block_size - 2,
                    tqdm(self.tokens, desc='filter'))
         )
-        print(max(len(li) for li in self.tokens))
 
         # obtain token ids
         self.token_ids = [
@@ -290,7 +289,7 @@ class LineByLineTextDatasetForElectra(Dataset):
                 ))
 
     def __len__(self):
-        return len(self.lines)
+        return len(self.tokens)
 
     def __getitem__(self, i):
         return (
@@ -312,7 +311,7 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
 
 if __name__ == "__main__":
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-    filepath = './data/wikitext-103/wikitext-103/wiki.train.tokens'
+    filepath = './data/wikitext-103/wikitext-103/wiki.test.tokens'
     block_size = 512
 
     dataset = LineByLineTextDatasetForElectra(
