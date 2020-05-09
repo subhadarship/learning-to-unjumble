@@ -1,0 +1,3 @@
+[submodule "create_data/data dir from DeepLearningExamples @ b88db70/wikiextractor"]
+	path = create_data/data dir from DeepLearningExamples @ b88db70/wikiextractor
+	url = https://github.com/attardi/wikiextractor.git
