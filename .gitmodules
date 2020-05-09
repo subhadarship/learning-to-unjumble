@@ -1,3 +1,0 @@
-[submodule "create_data/DeepLearningExamples"]
-	path = create_data/DeepLearningExamples
-	url = https://github.com/NVIDIA/DeepLearningExamples.git
