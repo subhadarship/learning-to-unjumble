@@ -7,4 +7,10 @@ Files edited are:
 - `bertPrep.py`
 - `WikiDownloader.py`
 
+`create_datasets_from_wikidump.sh`: run this to download and extract wikidump data:
+
+```text
+./create_datasets_from_wikidump.sh | tee wikidump.log
+```
+
 `wikiextractor` is added a submodule separately
