@@ -9,8 +9,14 @@ Files edited are:
 
 `create_datasets_from_wikidump.sh`: run this to download and extract wikidump data:
 
-```text
-./create_datasets_from_wikidump.sh | tee wikidump.log
+```shell script
+./create_datasets_from_wikidump.sh | tee log_wikidump.txt
 ```
 
-`wikiextractor` is added a submodule separately
+During the above run, following INFO was printed which may be useful
+```shell script
+INFO: Finished 4-process extraction of 15016 articles in 458.9s (32.7 art/s)
+INFO: total of page: 15111, total of articl page: 15016; total of used articl page: 15016
+```
+
+`wikiextractor` is added as a submodule separately

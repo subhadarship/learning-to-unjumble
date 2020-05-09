@@ -1,0 +1,36 @@
+Working Directory: ../../../data
+Action: download
+Dataset Name: wikicorpus_en
+
+Directory Structure:
+{ 'download': '../../../data\r/download',
+  'extracted': '../../../data\r/extracted',
+  'formatted': '../../../data\r/formatted_one_article_per_line',
+  'hdf5': '../../../data\r'
+          '/hdf5_lower_case_1_seq_len_512_max_pred_20_masked_lm_prob_0.15_random_seed_12345_dupe_factor_5',
+  'sharded': '../../../data\r'
+             '/sharded_training_shards_256_test_shards_256_fraction_0.2',
+  'tfrecord': '../../../data\r'
+              '/tfrecord_lower_case_1_seq_len_512_max_pred_20_masked_lm_prob_0.15_random_seed_12345_dupe_factor_5'}
+
+Downloading: https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles1.xml-p1p30303.bz2
+Unzipping: wikicorpus_en.xml.bz2
+Working Directory: ../../../data
+Action: text_formatting
+Dataset Name: wikicorpus_en
+
+Directory Structure:
+{ 'download': '../../../data\r/download',
+  'extracted': '../../../data\r/extracted',
+  'formatted': '../../../data\r/formatted_one_article_per_line',
+  'hdf5': '../../../data\r'
+          '/hdf5_lower_case_1_seq_len_512_max_pred_20_masked_lm_prob_0.15_random_seed_12345_dupe_factor_5',
+  'sharded': '../../../data\r'
+             '/sharded_training_shards_256_test_shards_256_fraction_0.2',
+  'tfrecord': '../../../data\r'
+              '/tfrecord_lower_case_1_seq_len_512_max_pred_20_masked_lm_prob_0.15_random_seed_12345_dupe_factor_5'}
+
+WikiExtractor Command: wikiextractor/WikiExtractor.py ../../../data/download/wikicorpus_en/wikicorpus_en.xml -b 100M --processes 4 -o ../../../data/extracted/wikicorpus_en
+../../../data/extracted/wikicorpus_en/AA/wiki_00
+../../../data/extracted/wikicorpus_en/AA/wiki_01
+../../../data/extracted/wikicorpus_en/AA/wiki_02
