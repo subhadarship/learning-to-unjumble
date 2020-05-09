@@ -17,7 +17,7 @@ learning to unjumble as a pretraining objective for RoBERTa
 
 ## Train with MLM Loss
 
-```jupyter
+```jupyterpython
 # make sure transformers version is 2.7.0
 !pip install transformers==2.7.0
 
@@ -46,7 +46,7 @@ python run_language_modeling.py \
 
 ## Train with token-modification-discrimination head
 
-```jupyter
+```jupyterpython
 # make sure transformers version is 2.7.0
 !pip install transformers==2.7.0
 
