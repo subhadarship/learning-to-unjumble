@@ -378,7 +378,7 @@ if __name__ == "__main__":
         '--data_dir',
         type=str,
         help='Specify data directory for downloading and extracting',
-        default='../../../data'
+        default='../../data'
     )
 
     args = parser.parse_args()
