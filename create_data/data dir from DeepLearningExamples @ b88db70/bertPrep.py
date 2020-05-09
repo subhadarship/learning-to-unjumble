@@ -24,7 +24,7 @@ import WikicorpusTextFormatting
 
 def main(args):
     # working_dir = os.environ['BERT_PREP_WORKING_DIR']
-    working_dir = '../../../../../../data'
+    working_dir = args.data_dir
 
     print('Working Directory:', working_dir)
     print('Action:', args.action)
@@ -372,6 +372,13 @@ if __name__ == "__main__":
         '--interactive_json_config_generator',
         type=str,
         help='Specify the action you want the app to take. e.g., generate vocab, segment, create tfrecords'
+    )
+
+    parser.add_argument(
+        '--data_dir',
+        type=str,
+        help='Specify data directory for downloading and extracting',
+        default='../../../data'
     )
 
     args = parser.parse_args()

@@ -14,7 +14,13 @@
 # limitations under the License.
 
 # Download
-python3 bertPrep.py --action download --dataset wikicorpus_en
+python3 bertPrep.py \
+    --action download \
+    --dataset wikicorpus_en \
+    --data_dir ../../../data
 
 # Properly format the text files
-python3 bertPrep.py --action text_formatting --dataset wikicorpus_en
+python3 bertPrep.py \
+    --action text_formatting \
+    --dataset wikicorpus_en \
+    --data_dir ../../../data
