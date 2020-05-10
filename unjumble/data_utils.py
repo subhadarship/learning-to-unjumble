@@ -205,7 +205,7 @@ class LineByLineTextDatasetForJumbled(Dataset):
         )
 
 
-class LineByLineTextDatasetForElectra(Dataset):
+class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
     def __init__(self, tokenizer: PreTrainedTokenizer, args,
                  file_path: str,
                  block_size=512,
@@ -325,7 +325,7 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
     if args.line_by_line and args.mlm:
         return LineByLineTextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
     if args.line_by_line and args.token_discrimination:
-        return LineByLineTextDatasetForElectra(
+        return LineByLineJumbledTextDatasetForTokenDiscrimination(
             tokenizer, args, file_path=file_path, block_size=args.block_size,
             prob=args.jumble_probability
         )
@@ -341,7 +341,7 @@ if __name__ == "__main__":
     """
     # the below does not work if the dataset is already cached
     """
-    dataset = LineByLineTextDatasetForElectra(
+    dataset = LineByLineJumbledTextDatasetForTokenDiscrimination(
         tokenizer,
         None,
         filepath,
