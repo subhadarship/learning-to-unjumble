@@ -53,7 +53,12 @@ def get_args():
         "--electra_loss", action="store_true", help="Train with electra loss instead of language modeling."
     )
     parser.add_argument(
-        "--mlm_probability", type=float, default=0.15, help="Ratio of tokens to mask for masked language modeling loss"
+        "--mlm_probability", type=float, default=0.15,
+        help="Ratio of tokens to mask for masked language modeling loss"
+    )
+    parser.add_argument(
+        "--jumble_probability", type=float, default=0.15,
+        help="Probability of jumbling words"
     )
 
     parser.add_argument(
@@ -150,7 +155,6 @@ def get_args():
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
     parser.add_argument("--server_ip", type=str, default="", help="For distant debugging.")
     parser.add_argument("--server_port", type=str, default="", help="For distant debugging.")
-    parser.add_argument("--prob", type=float, default=0.15, help="probability of jumbling words")
     args = parser.parse_args()
 
     return args

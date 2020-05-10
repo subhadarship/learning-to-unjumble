@@ -214,9 +214,12 @@ class LineByLineTextDatasetForElectra(Dataset):
 
         directory, filename = os.path.split(file_path)
         cached_features_file = os.path.join(
-            directory, args.model_type + "_cached_" +
-                       f"jumbled_prob_{prob}" +
-                       str(block_size) + "_" + filename
+            directory,
+            f"{args.model_type}_"
+            f"cached_"
+            f"jumble_prob{prob}_"
+            f"blocksize_{block_size}_"
+            f"{filename}"
         )
 
         if os.path.exists(cached_features_file) and not args.overwrite_cache:
@@ -322,8 +325,10 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
     if args.line_by_line and args.mlm:
         return LineByLineTextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
     if args.line_by_line and args.electra_loss:
-        return LineByLineTextDatasetForElectra(tokenizer, args, file_path=file_path, block_size=args.block_size,
-                                               prob=args.prob)
+        return LineByLineTextDatasetForElectra(
+            tokenizer, args, file_path=file_path, block_size=args.block_size,
+            prob=args.jumble_probability
+        )
     else:
         return TextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
 
