@@ -72,8 +72,8 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 --learning rate 5e-5 \
 --per_gpu_train_batch_size 16 \
 --per_gpu_eval_batch_size 16 \
---train_data_file $TRAIN_DATA_PATH \
---eval_data_file $VAL_DATA_PATH \
+--train_data $TRAIN_DATA_PATH \
+--eval_data $VAL_DATA_PATH \
 --jumble_probability 0.15
 --line_by_line \
 --logging_steps 1 \
