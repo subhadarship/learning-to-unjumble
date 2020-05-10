@@ -38,7 +38,7 @@ class ElectraDiscriminatorPredictions(torch.nn.Module):
         return logits
 
 
-class RobertaForElectraLoss(BertPreTrainedModel):
+class RobertaForTokenDiscrimination(BertPreTrainedModel):
     config_class = RobertaConfig
     pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
     base_model_prefix = "roberta"
@@ -49,8 +49,6 @@ class RobertaForElectraLoss(BertPreTrainedModel):
         self.roberta = RobertaModel(config)
         """
         self.lm_head = RobertaLMHead(config)  
-        # probably this is the last layer
-        # which results in V dim vectors for each token
         """
 
         self.discriminator_predictions = ElectraDiscriminatorPredictions(config)
@@ -80,8 +78,8 @@ class RobertaForElectraLoss(BertPreTrainedModel):
             in ``[0, 1]``
     Returns:
         :obj:`tuple(torch.FloatTensor)` comprising various elements depending on the configuration (:class:`~transformers.RobertaConfig`) and inputs:
-        electra_loss (`optional`, returned when ``labels`` is provided) ``torch.FloatTensor`` of shape ``(1,)``:
-            Electra loss.
+        loss (`optional`, returned when ``labels`` is provided) ``torch.FloatTensor`` of shape ``(1,)``:
+            token discrimination loss
         prediction_scores (:obj:`torch.FloatTensor` of shape :obj:`(batch_size, sequence_length, config.vocab_size)`)
             Prediction scores of the language modeling head (scores for each vocabulary token before SoftMax).
         hidden_states (:obj:`tuple(torch.FloatTensor)`, `optional`, returned when ``config.output_hidden_states=True``):

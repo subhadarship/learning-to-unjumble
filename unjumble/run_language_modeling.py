@@ -40,7 +40,7 @@ except ImportError:
 from args_utils import get_args
 from checkpoint_utils import _sorted_checkpoints
 from training_utils import set_seed, train, evaluate
-from model_utils import RobertaForElectraLoss
+from model_utils import RobertaForTokenDiscrimination
 from data_utils import load_and_cache_examples
 
 logger = logging.getLogger(__name__)
@@ -153,7 +153,7 @@ def main():
         args.block_size = min(args.block_size, tokenizer.max_len)
 
     if args.model_name_or_path and args.electra_loss:
-        model = RobertaForElectraLoss.from_pretrained(
+        model = RobertaForTokenDiscrimination.from_pretrained(
             args.model_name_or_path,
             from_tf=bool(".ckpt" in args.model_name_or_path),
             config=config,
@@ -215,7 +215,7 @@ def main():
         if args.mlm:
             model = AutoModelWithLMHead.from_pretrained(args.output_dir)
         elif args.electra_loss:
-            model = RobertaForElectraLoss.from_pretrained(args.output_dir)
+            model = RobertaForTokenDiscrimination.from_pretrained(args.output_dir)
         else:
             raise NotImplementedError('only mlm and electra loss supported')
 
@@ -239,7 +239,7 @@ def main():
             if args.mlm:
                 model = AutoModelWithLMHead.from_pretrained(checkpoint)
             elif args.electra_loss:
-                model = RobertaForElectraLoss.from_pretrained(checkpoint)
+                model = RobertaForTokenDiscrimination.from_pretrained(checkpoint)
             else:
                 raise NotImplementedError('only mlm and electra loss supported')
 
