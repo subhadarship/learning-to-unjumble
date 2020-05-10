@@ -324,7 +324,7 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
     file_path = args.eval_data_file if evaluate else args.train_data_file
     if args.line_by_line and args.mlm:
         return LineByLineTextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
-    if args.line_by_line and args.electra_loss:
+    if args.line_by_line and args.token_discrimination:
         return LineByLineTextDatasetForElectra(
             tokenizer, args, file_path=file_path, block_size=args.block_size,
             prob=args.jumble_probability

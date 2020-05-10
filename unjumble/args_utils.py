@@ -29,7 +29,8 @@ def get_args():
         "--eval_data_file",
         default=None,
         type=str,
-        help="An optional input evaluation data file to evaluate the perplexity on (a text file).",
+        help="An optional input evaluation data file to evaluate "
+             "the loss and perplexity (when applicable) on (a text file).",
     )
     parser.add_argument(
         "--line_by_line",
@@ -50,7 +51,8 @@ def get_args():
         "--mlm", action="store_true", help="Train with masked-language modeling loss instead of language modeling."
     )
     parser.add_argument(
-        "--electra_loss", action="store_true", help="Train with electra loss instead of language modeling."
+        "--token_discrimination", action="store_true",
+        help="Train with token discrimination loss instead of language modeling."
     )
     parser.add_argument(
         "--mlm_probability", type=float, default=0.15,
