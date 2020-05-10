@@ -19,4 +19,11 @@ INFO: Finished 4-process extraction of 15016 articles in 458.9s (32.7 art/s)
 INFO: total of page: 15111, total of articl page: 15016; total of used articl page: 15016
 ```
 
+- Another link for download: 
+
+```shell script
+INFO: Finished 4-process extraction of 118279 articles in 453.9s (260.6 art/s)
+INFO: total of page: 189766, total of articl page: 118279; total of used articl page: 118279
+```
+
 - `wikiextractor` is added as a submodule separately

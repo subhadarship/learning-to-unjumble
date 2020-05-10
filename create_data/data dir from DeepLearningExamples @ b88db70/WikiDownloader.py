@@ -26,7 +26,8 @@ class WikiDownloader:
         self.language = language
         self.download_urls = {
             # 'en' : 'https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2',
-            'en': 'https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles1.xml-p1p30303.bz2',
+            # 'en': 'https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles1.xml-p1p30303.bz2',
+            'en': 'https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles16.xml-p9518049p11018048.bz2',
             'zh': 'https://dumps.wikimedia.org/zhwiki/latest/zhwiki-latest-pages-articles.xml.bz2'
         }
 

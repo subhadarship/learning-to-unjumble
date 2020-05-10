@@ -2,8 +2,7 @@
 ### ./idea template
 
 .idea/
-/data/download/
-/data/extracted/
-/data/formatted_one_article_per_line/
+/data/wikidump_dataA/
+/data/wikidump_dataB/
 /data/wikidump/
 /data/wikitext-103/

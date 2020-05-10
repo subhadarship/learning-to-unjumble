@@ -7,9 +7,14 @@ from argparse import ArgumentParser
 def get_args():
     parser = ArgumentParser()
     parser.add_argument(
-        '--extracted_data_dir',
+        '--extracted_data_dirA',
         type=str,
-        default='../data/extracted/wikicorpus_en/AA'
+        default='../data/wikidump_dataA/extracted/wikicorpus_en/AA'
+    )
+    parser.add_argument(
+        '--extracted_data_dirB',
+        type=str,
+        default='../data/wikidump_dataB/extracted/wikicorpus_en/AA'
     )
     parser.add_argument(
         '--prepared_data_dir',
@@ -20,7 +25,7 @@ def get_args():
     return parser.parse_args()
 
 
-def split_data(dataset, val_ratio=0.1, random_seed=22):
+def split_data(dataset, val_ratio=0.01, random_seed=22):
     random.seed(random_seed)
     random.shuffle(dataset)
     num_val = int(len(dataset) * val_ratio)
@@ -29,14 +34,23 @@ def split_data(dataset, val_ratio=0.1, random_seed=22):
 
 if __name__ == "__main__":
     args = get_args()
-    file_paths = map(
+    file_pathsA = map(
         lambda filename: os.path.join(
-            args.extracted_data_dir, filename
+            args.extracted_data_dirA, filename
         ),
-        os.listdir(args.extracted_data_dir)
+        os.listdir(args.extracted_data_dirA)
     )
 
-    # load all lines from all filepaths
+    file_pathsB = map(
+        lambda filename: os.path.join(
+            args.extracted_data_dirB, filename
+        ),
+        os.listdir(args.extracted_data_dirB)
+    )
+
+    file_paths = list(file_pathsA) + list(file_pathsB)
+
+    # load all lines from all file paths
     text = []
     [
         text.extend(
@@ -68,7 +82,7 @@ if __name__ == "__main__":
     # split data into train and val
     train_text, val_text = split_data(clean_text)
 
-    os.makedirs(args.prepared_data_dir, exist_ok=False)
+    os.makedirs(args.prepared_data_dir, exist_ok=True)
     for split, data in zip(
             ['train', 'val'],
             [train_text, val_text]
