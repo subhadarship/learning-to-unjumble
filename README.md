@@ -58,7 +58,8 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 
 # run roberta training with token-modification-discrimination head
 !python run_language_modeling.py \
---output_dir ./models/roberta_token_discrimination \
+--output_dir ../models/roberta_token_discrimination \
+--tensorboard_log_dir ../tb/roberta_token_discrimination
 --model_type roberta \
 --model_name_or_path roberta-base
 --token_discrimination \
@@ -66,7 +67,7 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 --gradient_accumulation_steps 64 \
 --save_steps 50 \
 --max_steps 1000 \
---weight_decay 0.1 \
+--weight_decay 0.01 \
 --warmup_steps 100 \
 --learning rate 5e-5 \
 --per_gpu_train_batch_size 16 \
