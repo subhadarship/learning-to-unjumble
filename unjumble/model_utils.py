@@ -72,7 +72,7 @@ class RobertaForTokenDiscrimination(BertPreTrainedModel):
     ):
         r"""
         labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`, defaults to :obj:`None`):
-            Labels for computing the electra loss.
+            Labels for computing the token discrimination loss.
             Values should be in ``[-100, 0, 1]``
             Tokens with indices set to ``-100`` are ignored (masked), the loss is only computed for the tokens with labels
             in ``[0, 1]``

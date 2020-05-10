@@ -289,7 +289,7 @@ class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
                 tqdm(self.jumbled_tokens, desc='jumbled token ids')
             ]
 
-            # obtain label ids for electra loss
+            # obtain label ids for token discrimination loss
             self.labels = []
             for token_id, jumbled_token_id in tqdm(
                     zip(self.token_ids, self.jumbled_tokens_ids),

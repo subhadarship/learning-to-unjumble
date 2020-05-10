@@ -217,7 +217,7 @@ def main():
         elif args.token_discrimination:
             model = RobertaForTokenDiscrimination.from_pretrained(args.output_dir)
         else:
-            raise NotImplementedError('only mlm and electra loss supported')
+            raise NotImplementedError('only mlm and token discrimination loss supported')
 
         tokenizer = AutoTokenizer.from_pretrained(args.output_dir)
         model.to(args.device)
@@ -241,7 +241,7 @@ def main():
             elif args.token_discrimination:
                 model = RobertaForTokenDiscrimination.from_pretrained(checkpoint)
             else:
-                raise NotImplementedError('only mlm and electra loss supported')
+                raise NotImplementedError('only mlm and token discrimination loss supported')
 
             model.to(args.device)
             result = evaluate(args, model, tokenizer, prefix=prefix)
