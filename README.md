@@ -77,6 +77,7 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 --jumble_probability 0.15 \
 --line_by_line \
 --logging_steps 1 \
+--do_eval \
 --eval_all_checkpoints
 
 ```
