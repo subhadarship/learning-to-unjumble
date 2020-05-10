@@ -211,85 +211,104 @@ class LineByLineTextDatasetForElectra(Dataset):
                  block_size=512,
                  prob=0.15):
         assert os.path.isfile(file_path)
-        # Here, we do not cache the features, operating under the assumption
-        # that we will soon use fast multithreaded tokenizers from the
-        # `tokenizers` repo everywhere =)
-        logger.info("Creating features from dataset file at %s", file_path)
 
-        with open(file_path, encoding="utf-8") as f:
-            self.lines = [
-                line for line in tqdm(
-                    f.read().splitlines(),
-                    desc='read from file'
-                )
-                if (len(line) > 0 and not line.isspace())
-            ]
-
-        # tokenize
-        self.tokens = [
-            tokenizer.tokenize(
-                line, add_special_tokens=True
-            ) for line in tqdm(self.lines, desc='tokenize')
-        ]
-
-        # filter samples with number of tokens <= block_size - 2
-        # (reserve 2 tokens for start and end tokens)
-        self.tokens = list(
-            filter(lambda x: len(x) <= block_size - 2,
-                   tqdm(self.tokens, desc='filter'))
+        directory, filename = os.path.split(file_path)
+        cached_features_file = os.path.join(
+            directory, args.model_type + "_cached_" +
+                       f"jumbled_prob_{prob}" +
+                       str(block_size) + "_" + filename
         )
 
-        # obtain token ids
-        self.token_ids = [
-            [tokenizer.bos_token_id] +
-            tokenizer.convert_tokens_to_ids(token) +
-            [tokenizer.eos_token_id] \
-            for token in tqdm(self.tokens, desc='token ids')
-        ]  # token here is a set of tokens for a sequence actually
+        if os.path.exists(cached_features_file) and not args.overwrite_cache:
+            logger.info("Loading features from cached file %s", cached_features_file)
+            with open(cached_features_file, "rb") as handle:
+                self.jumbled_tokens_ids, self.labels = pickle.load(handle)
+        else:
 
-        # obtain mapping lists
-        self.mapping_lists = [
-            get_mapping_from_subwords(token)
-            for token in tqdm(self.tokens, desc='mapping')
-        ]
+            logger.info("Creating features from dataset file at %s", file_path)
 
-        # jumble
-        self.jumbled_tokens = [
-            scramble(
-                token, mapping_list, prob
+            with open(file_path, encoding="utf-8") as f:
+                self.lines = [
+                    line for line in tqdm(
+                        f.read().splitlines(),
+                        desc='read from file'
+                    )
+                    if (len(line) > 0 and not line.isspace())
+                ]
+
+            # tokenize
+            self.tokens = [
+                tokenizer.tokenize(
+                    line, add_special_tokens=True
+                ) for line in tqdm(self.lines, desc='tokenize')
+            ]
+
+            # filter samples with number of tokens <= block_size - 2
+            # (reserve 2 tokens for start and end tokens)
+            self.tokens = list(
+                filter(lambda x: len(x) <= block_size - 2,
+                       tqdm(self.tokens, desc='filter'))
             )
-            for token, mapping_list in
-            tqdm(
-                zip(self.tokens, self.mapping_lists),
-                total=len(self.tokens),
-                desc='jumble'
-            )
-        ]
 
-        # obtain jumbled token ids
-        self.jumbled_tokens_ids = [
-            [tokenizer.bos_token_id] +
-            tokenizer.convert_tokens_to_ids(jumbled_tokens) +
-            [tokenizer.eos_token_id] \
-            for jumbled_tokens in
-            tqdm(self.jumbled_tokens, desc='jumbled token ids')
-        ]
+            # obtain token ids
+            self.token_ids = [
+                [tokenizer.bos_token_id] +
+                tokenizer.convert_tokens_to_ids(token) +
+                [tokenizer.eos_token_id] \
+                for token in tqdm(self.tokens, desc='token ids')
+            ]  # token here is a set of tokens for a sequence actually
 
-        # obtain label ids for electra loss
-        self.labels = []
-        for token_id, jumbled_token_id in tqdm(
-                zip(self.token_ids, self.jumbled_tokens_ids),
-                total=len(self.token_ids),
-                desc='labels'
-        ):
-            self.labels.append(
-                np.array(
-                    np.array(token_id) == np.array(jumbled_token_id),
-                    dtype=np.int
-                ))
+            # obtain mapping lists
+            self.mapping_lists = [
+                get_mapping_from_subwords(token)
+                for token in tqdm(self.tokens, desc='mapping')
+            ]
+
+            # jumble
+            self.jumbled_tokens = [
+                scramble(
+                    token, mapping_list, prob
+                )
+                for token, mapping_list in
+                tqdm(
+                    zip(self.tokens, self.mapping_lists),
+                    total=len(self.tokens),
+                    desc='jumble'
+                )
+            ]
+
+            # obtain jumbled token ids
+            self.jumbled_tokens_ids = [
+                [tokenizer.bos_token_id] +
+                tokenizer.convert_tokens_to_ids(jumbled_tokens) +
+                [tokenizer.eos_token_id] \
+                for jumbled_tokens in
+                tqdm(self.jumbled_tokens, desc='jumbled token ids')
+            ]
+
+            # obtain label ids for electra loss
+            self.labels = []
+            for token_id, jumbled_token_id in tqdm(
+                    zip(self.token_ids, self.jumbled_tokens_ids),
+                    total=len(self.token_ids),
+                    desc='labels'
+            ):
+                self.labels.append(
+                    np.array(
+                        np.array(token_id) == np.array(jumbled_token_id),
+                        dtype=np.int
+                    ))
+
+            logger.info("Saving features into cached file %s", cached_features_file)
+            with open(cached_features_file, "wb") as handle:
+                pickle.dump(
+                    [self.jumbled_tokens_ids, self.labels],
+                    handle,
+                    protocol=pickle.HIGHEST_PROTOCOL
+                )
 
     def __len__(self):
-        return len(self.tokens)
+        return len(self.jumbled_tokens_ids)
 
     def __getitem__(self, i):
         return (
@@ -314,6 +333,9 @@ if __name__ == "__main__":
     filepath = './data/wikitext-103/wikitext-103/wiki.test.tokens'
     block_size = 512
 
+    """
+    # the below does not work if the dataset is already cached
+    """
     dataset = LineByLineTextDatasetForElectra(
         tokenizer,
         None,
