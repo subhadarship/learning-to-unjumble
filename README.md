@@ -53,24 +53,29 @@ python run_language_modeling.py \
 !cd ./unjumble
 
 # download data
-from torchtext.datasets import WikiText103
-WikiText103.download('./data')
+TRAIN_DATA_PATH=../../data/wikidump/train.txt
+VAL_DATA_PATH=../../data/wikidump/val.txt
 
 # run roberta training with token-modification-discrimination head
-python run_language_modeling.py \
---output_dir ./models/roberta_token_mod_disc_head \
+!python run_language_modeling.py \
+--output_dir ./models/roberta_token_discrimination \
 --model_type roberta \
---electra_loss \
---do_train \
---do_eval \
---save_steps 2000 \
---per_gpu_train_batch_size 8 \
---evaluate_during_training \
---train_data_file data/wikitext-103/wikitext-103/wiki.train.tokens \
---line_by_line \
---eval_data_file data/wikitext-103/wikitext-103/wiki.test.tokens \
 --model_name_or_path roberta-base
---prob 0.15
---logging_steps 100
+--token_discrimination \
+--do_train \
+--gradient_accumulation_steps 64 \
+--save_steps 50 \
+--max_steps 1000 \
+--weight_decay 0.1 \
+--warmup_steps 100 \
+--learning rate 5e-5 \
+--per_gpu_train_batch_size 16 \
+--per_gpu_eval_batch_size 16 \
+--train_data_file $TRAIN_DATA_PATH \
+--eval_data_file $VAL_DATA_PATH \
+--jumble_probability 0.15
+--line_by_line \
+--logging_steps 1 \
+--eval_all_checkpoints
 
 ```
