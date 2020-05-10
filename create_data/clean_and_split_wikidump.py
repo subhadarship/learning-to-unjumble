@@ -25,11 +25,11 @@ def get_args():
     return parser.parse_args()
 
 
-def split_data(dataset, val_ratio=0.01, random_seed=22):
+def split_data(dataset, val_size=14000, random_seed=22):
+    assert val_size < len(dataset), 'dataset is very small'
     random.seed(random_seed)
     random.shuffle(dataset)
-    num_val = int(len(dataset) * val_ratio)
-    return dataset[num_val:], dataset[:num_val]
+    return dataset[val_size:], dataset[:val_size]
 
 
 if __name__ == "__main__":
@@ -76,13 +76,13 @@ if __name__ == "__main__":
             line_idx = line_idx + 1
 
     # print number of lines before and after cleaning
-    print('number of lines before cleaning:', len(text))
-    print('number of lines after cleaning', len(clean_text))
+    print(f'number of lines before cleaning: {len(text):,}')
+    print(f'number of lines after cleaning: {len(clean_text):,}')
 
     # split data into train and val
     train_text, val_text = split_data(clean_text)
 
-    os.makedirs(args.prepared_data_dir, exist_ok=True)
+    os.makedirs(args.prepared_data_dir, exist_ok=False)
     for split, data in zip(
             ['train', 'val'],
             [train_text, val_text]
