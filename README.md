@@ -69,7 +69,7 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 --max_steps 1000 \
 --weight_decay 0.01 \
 --warmup_steps 100 \
---learning rate 5e-5 \
+--learning_rate 5e-5 \
 --per_gpu_train_batch_size 16 \
 --per_gpu_eval_batch_size 16 \
 --train_data_file $TRAIN_DATA_PATH \
