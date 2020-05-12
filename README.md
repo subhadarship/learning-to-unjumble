@@ -81,3 +81,23 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 --eval_all_checkpoints
 
 ```
+## Running on Prince
+```
+# Load these modules every time you log in
+module purge
+module load anaconda3/5.3.1
+module load cuda/10.0.130
+module load gcc/6.3.0
+
+# Activate your environment
+
+NETID=aa7513
+
+source activate /scratch/${NETID}/nlu_projects/env
+
+# Git pull/clone the repo
+
+cd /scratch/${NETID}/
+
+sbatch run_training.sbatch
+```
