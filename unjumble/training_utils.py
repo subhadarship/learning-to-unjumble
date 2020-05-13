@@ -49,7 +49,7 @@ def train(
 
     def collate(examples):
         if tokenizer._pad_token is None:
-            if args.token_discrimination:
+            if args.token_discrimination or args.mask_token_discrimination:
                 return (
                     pad_sequence([example[0] for example in examples], batch_first=True),
                     pad_sequence([example[1] for example in examples], batch_first=True)
@@ -57,7 +57,7 @@ def train(
             else:  # this includes args.mlm
                 return pad_sequence(examples, batch_first=True)
 
-        if args.token_discrimination:
+        if args.token_discrimination or args.mask_token_discrimination:
             return (
                 pad_sequence([example[0] for example in examples], batch_first=True,
                              padding_value=tokenizer.pad_token_id),
@@ -174,7 +174,7 @@ def train(
 
             if args.mlm:
                 inputs, labels = mask_tokens(batch, tokenizer, args)
-            elif args.token_discrimination:
+            elif args.token_discrimination or args.mask_token_discrimination:
                 inputs, labels = batch
             else:
                 inputs, labels = batch, batch
@@ -185,7 +185,7 @@ def train(
 
             if args.mlm:
                 outputs = model(inputs, masked_lm_labels=labels)
-            else:  # this includes args.token_discrimination case
+            else:  # this includes args.token_discrimination and args.mask_token_discrimination cases
                 outputs = model(inputs, labels=labels)
 
             loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
@@ -272,7 +272,7 @@ def evaluate(args, model: PreTrainedModel, tokenizer: PreTrainedTokenizer, prefi
 
     def collate(examples):
         if tokenizer._pad_token is None:
-            if args.token_discrimination:
+            if args.token_discrimination or args.mask_token_discrimination:
                 return (
                     pad_sequence([example[0] for example in examples], batch_first=True),
                     pad_sequence([example[1] for example in examples], batch_first=True)
@@ -280,7 +280,7 @@ def evaluate(args, model: PreTrainedModel, tokenizer: PreTrainedTokenizer, prefi
             else:  # this includes args.mlm
                 return pad_sequence(examples, batch_first=True)
 
-        if args.token_discrimination:
+        if args.token_discrimination or args.mask_token_discrimination:
             return (
                 pad_sequence([example[0] for example in examples], batch_first=True,
                              padding_value=tokenizer.pad_token_id),
@@ -311,7 +311,7 @@ def evaluate(args, model: PreTrainedModel, tokenizer: PreTrainedTokenizer, prefi
 
         if args.mlm:
             inputs, labels = mask_tokens(batch, tokenizer, args)
-        elif args.token_discrimination:
+        elif args.token_discrimination or args.mask_token_discrimination:
             inputs, labels = batch
         else:
             inputs, labels = batch, batch
@@ -322,7 +322,7 @@ def evaluate(args, model: PreTrainedModel, tokenizer: PreTrainedTokenizer, prefi
         with torch.no_grad():
             if args.mlm:
                 outputs = model(inputs, masked_lm_labels=labels)
-            else:  # this also includes args.token_discrimination
+            else:  # this also includes args.token_discrimination and args.mask_token_discrimination cases
                 outputs = model(inputs, labels=labels)
 
             lm_loss = outputs[0]
