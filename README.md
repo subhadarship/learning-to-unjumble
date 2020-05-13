@@ -112,7 +112,7 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 --per_gpu_eval_batch_size 16 \
 --train_data_file $TRAIN_DATA_PATH \
 --eval_data_file $VAL_DATA_PATH \
---mask_probability 0.15 \  # THIS
+--mask_probability 0.15 \  # ..THIS
 --line_by_line \
 --logging_steps 1 \
 --do_eval \
