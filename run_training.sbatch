@@ -7,8 +7,6 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=jh6926@nyu.edu
 
-pip install transformers==2.7.0
-
 NETID=jh6926
 
 cd ./unjumble
