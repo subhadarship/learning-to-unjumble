@@ -7,17 +7,17 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=jh6926@nyu.edu
 
-!pip install transformers==2.7.0
+pip install transformers==2.7.0
 
 NETID=jh6926
 
-cd /scratch/jh6926/nlu/learning-to-unjumble/unjumble
+cd ./unjumble
 
 DATA_DIR_TRAIN=/scratch/${NETID}/nlu/data/wikidump/train.txt
 DATA_DIR_VAL=/scratch/${NETID}/nlu/data/wikidump/val.txt
 
 # run roberta training with masked token-modification-discrimination head
-!python run_language_modeling.py \
+python run_language_modeling.py \
 --output_dir ../models/roberta_MASK_token_discrimination \
 --tensorboard_log_dir ../tb/roberta_MASK_token_discrimination \
 --model_type roberta \
