@@ -52,7 +52,11 @@ def get_args():
     )
     parser.add_argument(
         "--token_discrimination", action="store_true",
-        help="Train with token discrimination loss instead of language modeling."
+        help="Train with jumbled token discrimination loss instead of language modeling."
+    )
+    parser.add_argument(
+        "--mask_token_discrimination", action="store_true",
+        help="Train with masked token discrimination loss instead of language modeling."
     )
     parser.add_argument(
         "--mlm_probability", type=float, default=0.15,
@@ -61,6 +65,10 @@ def get_args():
     parser.add_argument(
         "--jumble_probability", type=float, default=0.15,
         help="Probability of jumbling words"
+    )
+    parser.add_argument(
+        "--mask_probability", type=float, default=0.15,
+        help="Probability of masking words"
     )
 
     parser.add_argument(
