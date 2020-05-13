@@ -169,67 +169,6 @@ class LineByLineTextDataset(Dataset):
         return torch.tensor(self.examples[i], dtype=torch.long)
 
 
-class LineByLineTextDatasetForJumbled(Dataset):
-    def __init__(self, tokenizer: PreTrainedTokenizer, args,
-                 file_path: str,
-                 block_size=512,
-                 prob=0.15):
-        assert os.path.isfile(file_path)
-        # Here, we do not cache the features, operating under the assumption
-        # that we will soon use fast multithreaded tokenizers from the
-        # `tokenizers` repo everywhere =)
-        logger.info("Creating features from dataset file at %s", file_path)
-
-        with open(file_path, encoding="utf-8") as f:
-            self.lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
-
-        # tokenize
-        self.tokens = [
-            tokenizer.tokenize(
-                line, add_special_tokens=True, max_length=block_size
-            ) for line in tqdm(self.lines)
-        ]
-
-        self.token_ids = [
-            [tokenizer.bos_token_id] +
-            tokenizer.convert_tokens_to_ids(token) +
-            [tokenizer.eos_token_id] \
-            for token in self.tokens
-        ]  # token here is a set of tokens for a sequence actually
-
-        # obtain mapping lists
-        self.mapping_lists = [
-            get_mapping_from_subwords(token)
-            for token in tqdm(self.tokens)
-        ]
-
-        # jumble
-        self.jumbled_tokens = [
-            scramble(
-                token, mapping_list, prob
-            )
-            for token, mapping_list in
-            tqdm(zip(self.tokens, self.mapping_lists), total=len(self.tokens))
-        ]
-
-        # obtain jumbled token ids
-        self.jumbled_tokens_ids = [
-            [tokenizer.bos_token_id] +
-            tokenizer.convert_tokens_to_ids(jumbled_tokens) +
-            [tokenizer.eos_token_id] \
-            for jumbled_tokens in self.jumbled_tokens
-        ]
-
-    def __len__(self):
-        return len(self.lines)
-
-    def __getitem__(self, i):
-        return (
-            torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
-            torch.tensor(self.token_ids[i], dtype=torch.long)
-        )
-
-
 class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
     def __init__(self, tokenizer: PreTrainedTokenizer, args,
                  file_path: str,
