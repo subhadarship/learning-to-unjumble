@@ -5,6 +5,11 @@ from itertools import groupby
 from operator import itemgetter
 from typing import Tuple
 
+import random
+import nltk
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
+
 import numpy as np
 import torch
 from torch.utils.data import Dataset
@@ -30,9 +35,6 @@ def get_mapping_from_subwords(subwords):
             mapping_idx = mapping_idx + 1
         mapping_list.append(mapping_idx)
     return mapping_list
-
-
-import random
 
 
 def convert(ls, mapping):
