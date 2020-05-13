@@ -22,7 +22,7 @@ python run_language_modeling.py \
 --tensorboard_log_dir ../tb/roberta_MASK_token_discrimination \
 --model_type roberta \
 --model_name_or_path roberta-base \
---mask_token_discrimination \  # NOTE THIS AND..
+--mask_token_discrimination \
 --do_train \
 --gradient_accumulation_steps 64 \
 --save_steps 50 \
@@ -34,7 +34,7 @@ python run_language_modeling.py \
 --per_gpu_eval_batch_size 16 \
 --train_data_file $TRAIN_DATA_PATH \
 --eval_data_file $VAL_DATA_PATH \
---mask_probability 0.15 \  # ..THIS
+--mask_probability 0.15 \
 --line_by_line \
 --logging_steps 1 \
 --do_eval \
