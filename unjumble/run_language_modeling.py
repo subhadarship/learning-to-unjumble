@@ -53,7 +53,7 @@ def main():
     args = get_args()
 
     if args.model_type in ["bert", "roberta", "distilbert", "camembert"] and not \
-            (args.mlm or args.token_discrimination):
+            (args.mlm or args.token_discrimination or args.mask_token_discrimination):
         raise ValueError(
             "BERT and RoBERTa-like models do not have LM heads but masked LM heads. They must be run using the --mlm "
             "flag (masked language modeling)."
@@ -152,7 +152,9 @@ def main():
     else:
         args.block_size = min(args.block_size, tokenizer.max_len)
 
-    if args.model_name_or_path and args.token_discrimination:
+    if args.model_name_or_path and (
+            args.token_discrimination or args.mask_token_discrimination
+    ):
         model = RobertaForTokenDiscrimination.from_pretrained(
             args.model_name_or_path,
             from_tf=bool(".ckpt" in args.model_name_or_path),
@@ -214,7 +216,7 @@ def main():
         # Load a trained model and vocabulary that you have fine-tuned
         if args.mlm:
             model = AutoModelWithLMHead.from_pretrained(args.output_dir)
-        elif args.token_discrimination:
+        elif args.token_discrimination or args.mask_token_discrimination:
             model = RobertaForTokenDiscrimination.from_pretrained(args.output_dir)
         else:
             raise NotImplementedError('only mlm and token discrimination loss supported')
@@ -238,7 +240,7 @@ def main():
 
             if args.mlm:
                 model = AutoModelWithLMHead.from_pretrained(checkpoint)
-            elif args.token_discrimination:
+            elif args.token_discrimination or args.mask_token_discrimination:
                 model = RobertaForTokenDiscrimination.from_pretrained(checkpoint)
             else:
                 raise NotImplementedError('only mlm and token discrimination loss supported')

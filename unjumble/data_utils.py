@@ -96,6 +96,31 @@ def scramble(seq, mapping, prob=0.15):
     return seq_to_shuffle
 
 
+def mask_words(
+        tokens,
+        mapping,
+        tokenizer: PreTrainedTokenizer,
+        prob=0.15
+):
+    if tokenizer.mask_token is None:
+        raise ValueError(
+            "This tokenizer does not have a mask token which is necessary for masking"
+        )
+
+    word_ids = np.arange(len(set(mapping)))
+    num_mask_words = int(len(set(mapping)) * prob)
+    mask_word_ids = np.random.choice(
+        word_ids,
+        num_mask_words,
+        replace=False
+    )
+    mask_bool = [True if word_idx in mask_word_ids
+                 else False for word_idx in mapping]
+    masked_tokens = [tokenizer.mask_token if mask_bool[i] else token
+                     for i, token in enumerate(tokens)]
+    return masked_tokens
+
+
 def mask_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> Tuple[torch.Tensor, torch.Tensor]:
     """ Prepare masked tokens inputs/labels for masked language modeling: 80% MASK, 10% random, 10% original. """
 
@@ -189,67 +214,6 @@ class LineByLineTextDataset(Dataset):
 
     def __getitem__(self, i):
         return torch.tensor(self.examples[i], dtype=torch.long)
-
-
-class LineByLineTextDatasetForJumbled(Dataset):
-    def __init__(self, tokenizer: PreTrainedTokenizer, args,
-                 file_path: str,
-                 block_size=512,
-                 prob=0.15):
-        assert os.path.isfile(file_path)
-        # Here, we do not cache the features, operating under the assumption
-        # that we will soon use fast multithreaded tokenizers from the
-        # `tokenizers` repo everywhere =)
-        logger.info("Creating features from dataset file at %s", file_path)
-
-        with open(file_path, encoding="utf-8") as f:
-            self.lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
-
-        # tokenize
-        self.tokens = [
-            tokenizer.tokenize(
-                line, add_special_tokens=True, max_length=block_size
-            ) for line in tqdm(self.lines)
-        ]
-
-        self.token_ids = [
-            [tokenizer.bos_token_id] +
-            tokenizer.convert_tokens_to_ids(token) +
-            [tokenizer.eos_token_id] \
-            for token in self.tokens
-        ]  # token here is a set of tokens for a sequence actually
-
-        # obtain mapping lists
-        self.mapping_lists = [
-            get_mapping_from_subwords(token)
-            for token in tqdm(self.tokens)
-        ]
-
-        # jumble
-        self.jumbled_tokens = [
-            scramble(
-                token, mapping_list, prob
-            )
-            for token, mapping_list in
-            tqdm(zip(self.tokens, self.mapping_lists), total=len(self.tokens))
-        ]
-
-        # obtain jumbled token ids
-        self.jumbled_tokens_ids = [
-            [tokenizer.bos_token_id] +
-            tokenizer.convert_tokens_to_ids(jumbled_tokens) +
-            [tokenizer.eos_token_id] \
-            for jumbled_tokens in self.jumbled_tokens
-        ]
-
-    def __len__(self):
-        return len(self.lines)
-
-    def __getitem__(self, i):
-        return (
-            torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
-            torch.tensor(self.token_ids[i], dtype=torch.long)
-        )
 
 
 class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
@@ -367,6 +331,121 @@ class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
         )
 
 
+class LineByLineMaskedTextDatasetForTokenDiscrimination(Dataset):
+    def __init__(self, tokenizer: PreTrainedTokenizer, args,
+                 file_path: str,
+                 block_size=512,
+                 prob=0.15):
+        assert os.path.isfile(file_path)
+
+        directory, filename = os.path.split(file_path)
+        cached_features_file = os.path.join(
+            directory,
+            f"{args.model_type}_"
+            f"cached_"
+            f"mask_prob{prob}_"
+            f"blocksize_{block_size}_"
+            f"{filename}"
+        )
+
+        if os.path.exists(cached_features_file) and not args.overwrite_cache:
+            logger.info("Loading features from cached file %s", cached_features_file)
+            with open(cached_features_file, "rb") as handle:
+                self.masked_tokens_ids, self.labels = pickle.load(handle)
+        else:
+
+            logger.info("Creating features from dataset file at %s", file_path)
+
+            with open(file_path, encoding="utf-8") as f:
+                self.lines = [
+                    line for line in tqdm(
+                        f.read().splitlines(),
+                        desc='read from file'
+                    )
+                    if (len(line) > 0 and not line.isspace())
+                ]
+
+            # tokenize
+            self.tokens = [
+                tokenizer.tokenize(
+                    line, add_special_tokens=True
+                ) for line in tqdm(self.lines, desc='tokenize')
+            ]
+
+            # filter samples with number of tokens <= block_size - 2
+            # (reserve 2 tokens for start and end tokens)
+            self.tokens = list(
+                filter(lambda x: len(x) <= block_size - 2,
+                       tqdm(self.tokens, desc='filter'))
+            )
+
+            # obtain token ids
+            self.token_ids = [
+                [tokenizer.bos_token_id] +
+                tokenizer.convert_tokens_to_ids(token) +
+                [tokenizer.eos_token_id] \
+                for token in tqdm(self.tokens, desc='token ids')
+            ]  # token here is a set of tokens for a sequence actually
+
+            # obtain mapping lists
+            self.mapping_lists = [
+                get_mapping_from_subwords(token)
+                for token in tqdm(self.tokens, desc='mapping')
+            ]
+
+            # mask
+            self.masked_tokens = [
+                mask_words(
+                    token, mapping_list, tokenizer, prob
+                )
+                for token, mapping_list in
+                tqdm(
+                    zip(self.tokens, self.mapping_lists),
+                    total=len(self.tokens),
+                    desc='mask'
+                )
+            ]
+
+            # obtain jumbled token ids
+            self.masked_tokens_ids = [
+                [tokenizer.bos_token_id] +
+                tokenizer.convert_tokens_to_ids(masked_tokens) +
+                [tokenizer.eos_token_id] \
+                for masked_tokens in
+                tqdm(self.masked_tokens, desc='masked token ids')
+            ]
+
+            # obtain label ids for token discrimination loss
+            self.labels = []
+            for token_id, masked_token_id in tqdm(
+                    zip(self.token_ids, self.masked_tokens_ids),
+                    total=len(self.token_ids),
+                    desc='labels'
+            ):
+                self.labels.append(
+                    np.array(
+                        np.array(token_id) == np.array(masked_token_id),
+                        dtype=np.int
+                    ))
+
+            logger.info("Saving features into cached file %s", cached_features_file)
+            with open(cached_features_file, "wb") as handle:
+                pickle.dump(
+                    [self.masked_tokens_ids, self.labels],
+                    handle,
+                    protocol=pickle.HIGHEST_PROTOCOL
+                )
+
+    def __len__(self):
+        return len(self.masked_tokens_ids)
+
+    def __getitem__(self, i):
+        return (
+            torch.tensor(self.masked_tokens_ids[i], dtype=torch.long),
+            torch.tensor(self.labels[i], dtype=torch.long)
+        )
+
+
 def load_and_cache_examples(args, tokenizer, evaluate=False):
     file_path = args.eval_data_file if evaluate else args.train_data_file
     if args.line_by_line and args.mlm:
@@ -375,6 +454,11 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
         return LineByLineJumbledTextDatasetForTokenDiscrimination(
             tokenizer, args, file_path=file_path, block_size=args.block_size,
             prob=args.jumble_probability
+        )
+    if args.line_by_line and args.mask_token_discrimination:
+        return LineByLineMaskedTextDatasetForTokenDiscrimination(
+            tokenizer, args, file_path=file_path, block_size=args.block_size,
+            prob=args.mask_probability
         )
     else:
         return TextDataset(tokenizer, args, file_path=file_path, block_size=args.block_size)
