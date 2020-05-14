@@ -17,7 +17,7 @@ learning to unjumble as a pretraining objective for RoBERTa
 
 ## Train with MLM Loss
 
-```jupyterpython
+```shell script
 # make sure transformers version is 2.7.0
 !pip install transformers==2.7.0
 
@@ -46,7 +46,7 @@ python run_language_modeling.py \
 
 ## Train with jumble token discrimination loss
 
-```jupyterpython
+```shell script
 # make sure transformers version is 2.7.0
 !pip install transformers==2.7.0
 
@@ -84,7 +84,7 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 
 ## Train with masked token discrimination loss
 
-```jupyterpython
+```shell script
 # make sure transformers version is 2.7.0
 !pip install transformers==2.7.0
 
@@ -121,7 +121,7 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 ```
 
 ## Running on Prince
-```
+```shell script
 # Load these modules every time you log in
 module purge
 module load anaconda3/5.3.1
