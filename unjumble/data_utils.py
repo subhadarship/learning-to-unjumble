@@ -5,6 +5,12 @@ from itertools import groupby
 from operator import itemgetter
 from typing import Tuple
 
+import random
+import nltk
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
+
 import numpy as np
 import torch
 from torch.utils.data import Dataset
@@ -30,6 +36,26 @@ def get_mapping_from_subwords(subwords):
             mapping_idx = mapping_idx + 1
         mapping_list.append(mapping_idx)
     return mapping_list
+
+
+def pos_scramble(tokenizer, seq, mapping, prob=0.15):
+    seq_to_shuffle = tokenizer.convert_tokens_to_string(seq)
+    seq_to_shuffle = nltk.word_tokenize(seq_to_shuffle)
+    seq_to_shuffle = nltk.pos_tag(seq_to_shuffle)
+
+    id_all = random.sample(range(0, len(seq_to_shuffle)), int(len(seq_to_shuffle) * prob))
+    id_all.sort()
+    id_nadj = [id for id in id_all if 'NN' in seq_to_shuffle[id][1] or 'JJ' in seq_to_shuffle[id][1]]
+    shuffle_id_nadj = np.random.permutation(id_nadj[:])
+
+    shuffled = seq_to_shuffle[:]
+    for i in range(len(id_nadj)):
+        shuffled[id_nadj[i]] = seq_to_shuffle[shuffle_id_nadj[i]]
+    shuffled = [word[0] for word in shuffled]
+
+    shuffled = TreebankWordDetokenizer().detokenize(shuffled)
+    shuffled = tokenizer.tokenize(shuffled)
+    return shuffled
 
 
 def scramble(seq, mapping, prob=0.15):
