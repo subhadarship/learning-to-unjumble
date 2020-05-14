@@ -27,7 +27,7 @@ python run_language_modeling.py \
 --max_steps 1000 \
 --weight_decay 0.01 \
 --warmup_steps 100 \
---learning_rate 1e-6 \
+--learning_rate 1e-4 \
 --per_gpu_train_batch_size 16 \
 --per_gpu_eval_batch_size 16 \
 --train_data_file $DATA_DIR_TRAIN \
