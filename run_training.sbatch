@@ -15,7 +15,7 @@ DATA_DIR_TRAIN=/scratch/${NETID}/nlu/data/wikidump/train.txt
 DATA_DIR_VAL=/scratch/${NETID}/nlu/data/wikidump/val.txt
 
 # run roberta training with masked token-modification-discrimination head
-!python run_language_modeling.py \
+python run_language_modeling.py \
 --output_dir ../models/roberta_token_discrimination \
 --tensorboard_log_dir ../tb/roberta_token_discrimination \
 --model_type roberta \
