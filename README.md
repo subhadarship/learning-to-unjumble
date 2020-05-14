@@ -44,7 +44,7 @@ python run_language_modeling.py \
 
 ```
 
-## Train with jumble token discrimination loss
+## Train with jumbled token discrimination loss
 
 ```shell script
 # make sure transformers version is 2.7.0
