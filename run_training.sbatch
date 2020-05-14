@@ -30,8 +30,8 @@ python run_language_modeling.py \
 --learning_rate 1e-6 \
 --per_gpu_train_batch_size 16 \
 --per_gpu_eval_batch_size 16 \
---train_data_file $TRAIN_DATA_PATH \
---eval_data_file $VAL_DATA_PATH \
+--train_data_file $DATA_DIR_TRAIN \
+--eval_data_file $DATA_DIR_VAL \
 --mask_probability 0.15 \
 --line_by_line \
 --logging_steps 1 \
