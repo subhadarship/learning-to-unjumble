@@ -15,6 +15,10 @@ learning to unjumble as a pretraining objective for RoBERTa
 - electra score on QNLI task: see [`notebooks_electra/electra_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_electra/electra_qnli.ipynb)
 - electra score on RTE task: see [`notebooks_electra/electra_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_electra/electra_rte.ipynb)
 
+## GLUE Scores Using RoBERTA With Jumbled Token Discrimination Loss
+#### jumbling probability = `0.15`, peak lr = `e-4`, steps = `1000`
+- Score on RTE task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb)
+
 ## Train with MLM Loss
 
 ```shell script
