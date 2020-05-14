@@ -82,6 +82,45 @@ VAL_DATA_PATH=../../data/wikidump/val.txt
 
 ```
 
+## Train with POS based jumbled token discrimination loss
+
+```shell script
+# make sure transformers version is 2.7.0
+!pip install transformers==2.7.0
+
+!cd ./unjumble
+
+# download data
+TRAIN_DATA_PATH=../../data/wikidump/train.txt
+VAL_DATA_PATH=../../data/wikidump/val.txt
+
+# run roberta training with jumbled token-modification-discrimination head
+!python run_language_modeling.py \
+--output_dir ../models/roberta_token_discrimination \
+--tensorboard_log_dir ../tb/roberta_token_discrimination \
+--model_type roberta \
+--model_name_or_path roberta-base \
+--token_discrimination \
+--pos \  # perform POS based jumbling (only Nouns and Adjectives are jumbled)
+--do_train \
+--gradient_accumulation_steps 64 \
+--save_steps 50 \
+--max_steps 1000 \
+--weight_decay 0.01 \
+--warmup_steps 100 \
+--learning_rate 5e-5 \
+--per_gpu_train_batch_size 16 \
+--per_gpu_eval_batch_size 16 \
+--train_data_file $TRAIN_DATA_PATH \
+--eval_data_file $VAL_DATA_PATH \
+--jumble_probability 0.15 \
+--line_by_line \
+--logging_steps 1 \
+--do_eval \
+--eval_all_checkpoints
+
+```
+
 ## Train with masked token discrimination loss
 
 ```shell script
