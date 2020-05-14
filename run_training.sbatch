@@ -24,7 +24,7 @@ python run_language_modeling.py \
 --do_train \
 --gradient_accumulation_steps 64 \
 --save_steps 50 \
---max_steps 1000 \
+--max_steps 1500 \
 --weight_decay 0.01 \
 --warmup_steps 100 \
 --learning_rate 1e-4 \
