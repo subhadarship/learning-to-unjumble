@@ -140,3 +140,42 @@ cd /scratch/${NETID}/
 
 sbatch run_training.sbatch
 ```
+
+## Compute GLUE scores
+```shell script
+# make sure transformers version is 2.8.0
+!pip install transformers==2.8.0
+
+cd ./compute_glue_scores
+
+GLUE_DIR=../data/glue
+TASK_NAME=QNLI  # specify GLUE task
+
+# download GLUE data
+!python download_glue_data.py --data_dir $GLUE_DIR --tasks $TASK_NAME
+
+# specify the model directory
+# the model directory may be a checkpoint directory
+# it should contain config.json, merges.txt, pytorch_model.bin, special_tokens_map.json, tokenizer_config.json, training_args.bin, vocab.json
+# it SHOULD NOT contain optimizer.pt and scheduler.pt
+MODEL_DIR=../models/roberta_token_discrimination
+
+OUTPUT_DIR=../models/glue/$TASK_NAME
+
+# run glue
+!python run_glue.py \
+    --model_type roberta \
+    --model_name_or_path $MODEL_DIR \
+    --task_name $TASK_NAME \
+    --do_train \
+    --do_eval \
+    --data_dir $GLUE_DIR/$TASK_NAME \
+    --max_seq_length 128 \
+    --per_gpu_eval_batch_size=64   \
+    --per_gpu_train_batch_size=64   \
+    --learning_rate 2e-5 \
+    --num_train_epochs 3 \
+    --output_dir $OUTPUT_DIR \
+    --overwrite_output_dir
+
+```
