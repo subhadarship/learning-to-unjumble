@@ -7,6 +7,7 @@ from typing import Tuple
 
 import random
 import nltk
+from nltk.tokenize.treebank import TreebankWordDetokenizer
 nltk.download('averaged_perceptron_tagger')
 nltk.download('punkt')
 
@@ -37,30 +38,9 @@ def get_mapping_from_subwords(subwords):
     return mapping_list
 
 
-def convert(ls, mapping):
-    new_ls = []
-    new_to_ls = {}
-    inner = []
-    index = 0
-    word = ""
-
-    for (w, j) in zip(ls, mapping):
-        if j == index:
-            word += w.replace('Ġ', '')
-            inner.append(w)
-        else:
-            new_ls.append(word)
-            new_to_ls[word] = inner
-            inner = [w]
-            index = j
-            word = w.replace('Ġ', '')
-    new_ls.append(word)
-    new_to_ls[word] = inner
-    return [new_ls, new_to_ls]
-
-
-def pos_scramble(seq, mapping, prob=0.15):
-    seq_to_shuffle, map_to_original = convert(seq, mapping)
+def pos_scramble(tokenizer, seq, mapping, prob=0.15):
+    seq_to_shuffle = tokenizer.convert_tokens_to_string(seq)
+    seq_to_shuffle = nltk.word_tokenize(seq_to_shuffle)
     seq_to_shuffle = nltk.pos_tag(seq_to_shuffle)
 
     id_all = random.sample(range(0, len(seq_to_shuffle)), int(len(seq_to_shuffle) * prob))
@@ -73,10 +53,9 @@ def pos_scramble(seq, mapping, prob=0.15):
         shuffled[id_nadj[i]] = seq_to_shuffle[shuffle_id_nadj[i]]
     shuffled = [word[0] for word in shuffled]
 
-    result = []
-    for w in shuffled:
-        result += map_to_original[w]
-    return result
+    shuffled = TreebankWordDetokenizer().detokenize(shuffled)
+    shuffled = tokenizer.tokenize(shuffled)
+    return shuffled
 
 
 def scramble(seq, mapping, prob=0.15):
