@@ -15,24 +15,24 @@ DATA_DIR_TRAIN=/scratch/${NETID}/nlu/data/wikidump/train.txt
 DATA_DIR_VAL=/scratch/${NETID}/nlu/data/wikidump/val.txt
 
 # run roberta training with masked token-modification-discrimination head
-python run_language_modeling.py \
---output_dir ../models/roberta_MASK_token_discrimination \
---tensorboard_log_dir ../tb/roberta_MASK_token_discrimination \
+!python run_language_modeling.py \
+--output_dir ../models/roberta_token_discrimination \
+--tensorboard_log_dir ../tb/roberta_token_discrimination \
 --model_type roberta \
 --model_name_or_path roberta-base \
---mask_token_discrimination \
+--token_discrimination \
 --do_train \
 --gradient_accumulation_steps 64 \
 --save_steps 50 \
---max_steps 1500 \
+--max_steps 1000 \
 --weight_decay 0.01 \
 --warmup_steps 100 \
 --learning_rate 1e-4 \
 --per_gpu_train_batch_size 16 \
 --per_gpu_eval_batch_size 16 \
---train_data_file $DATA_DIR_TRAIN \
---eval_data_file $DATA_DIR_VAL \
---mask_probability 0.15 \
+--train_data_file $TRAIN_DATA_PATH \
+--eval_data_file $VAL_DATA_PATH \
+--jumble_probability 0.15 \
 --line_by_line \
 --logging_steps 1 \
 --do_eval \
