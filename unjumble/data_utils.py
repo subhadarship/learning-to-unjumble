@@ -1,18 +1,15 @@
 import logging
 import os
 import pickle
+import random
 from itertools import groupby
 from operator import itemgetter
 from typing import Tuple
 
-import random
 import nltk
-from nltk.tokenize.treebank import TreebankWordDetokenizer
-nltk.download('averaged_perceptron_tagger')
-nltk.download('punkt')
-
 import numpy as np
 import torch
+from nltk.tokenize.treebank import TreebankWordDetokenizer
 from torch.utils.data import Dataset
 from tqdm import tqdm
 from transformers import (
@@ -24,6 +21,9 @@ try:
     from torch.utils.tensorboard import SummaryWriter
 except ImportError:
     from tensorboardX import SummaryWriter
+
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ def pos_scramble(tokenizer, seq, mapping, prob=0.15):
     shuffled = [word[0] for word in shuffled]
 
     shuffled = TreebankWordDetokenizer().detokenize(shuffled)
-    shuffled = tokenizer.tokenize(shuffled)
+    shuffled = tokenizer.tokenize(shuffled, add_special_tokens=True)
     return shuffled
 
 
@@ -261,6 +261,9 @@ class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
             self.jumbled_tokens = [
                 scramble(
                     token, mapping_list, prob
+                ) if not args.pos
+                else pos_scramble(
+                    tokenizer, token, mapping_list, prob
                 )
                 for token, mapping_list in
                 tqdm(

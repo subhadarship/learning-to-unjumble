@@ -55,6 +55,11 @@ def get_args():
         help="Train with jumbled token discrimination loss instead of language modeling."
     )
     parser.add_argument(
+        "--pos", action="store_true",
+        help="Apply POS based jumbling. Only Nouns and Adj are jumbled. "
+             "Only applicable when args.token_discrimination is set"
+    )
+    parser.add_argument(
         "--mask_token_discrimination", action="store_true",
         help="Train with masked token discrimination loss instead of language modeling."
     )
