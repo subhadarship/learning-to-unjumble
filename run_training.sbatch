@@ -21,9 +21,10 @@ python run_language_modeling.py \
 --model_type roberta \
 --model_name_or_path roberta-base \
 --token_discrimination \
+--pos \
 --do_train \
 --gradient_accumulation_steps 64 \
---save_steps 50 \
+--save_steps 100 \
 --max_steps 1000 \
 --weight_decay 0.01 \
 --warmup_steps 100 \
@@ -32,7 +33,7 @@ python run_language_modeling.py \
 --per_gpu_eval_batch_size 16 \
 --train_data_file $TRAIN_DATA_PATH \
 --eval_data_file $VAL_DATA_PATH \
---jumble_probability 0.15 \
+--jumble_probability 0.3 \
 --line_by_line \
 --logging_steps 1 \
 --do_eval \
