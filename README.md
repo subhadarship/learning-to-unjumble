@@ -19,6 +19,7 @@ learning to unjumble as a pretraining objective for RoBERTa
 #### jumbling probability = `0.15`, peak lr = `e-4`, steps = `1000`
 - Score on RTE task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb)
 - Score on QNLI task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/qnli.ipynb)
+- Score on STS-B task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/sts-b.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/sts-b.ipynb)
 
 ## Train with MLM Loss
 
