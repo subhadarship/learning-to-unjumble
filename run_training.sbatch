@@ -33,7 +33,7 @@ python run_language_modeling.py \
 --per_gpu_eval_batch_size 16 \
 --train_data_file $DATA_DIR_TRAIN \
 --eval_data_file $DATA_DIR_VAL \
---jumble_probability 0.3 \
+--jumble_probability 0.15 \
 --line_by_line \
 --logging_steps 1 \
 --do_eval \
