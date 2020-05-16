@@ -203,14 +203,24 @@ class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
         assert os.path.isfile(file_path)
 
         directory, filename = os.path.split(file_path)
-        cached_features_file = os.path.join(
-            directory,
-            f"{args.model_type}_"
-            f"cached_"
-            f"jumble_prob{prob}_"
-            f"blocksize_{block_size}_"
-            f"{filename}"
-        )
+        if not args.pos:
+            cached_features_file = os.path.join(
+                directory,
+                f"{args.model_type}_"
+                f"cached_"
+                f"jumble_prob{prob}_"
+                f"blocksize_{block_size}_"
+                f"{filename}"
+            )
+        else:
+            cached_features_file = os.path.join(
+                directory,
+                f"{args.model_type}_"
+                f"cached_"
+                f"pos_jumble_prob{prob}_"
+                f"blocksize_{block_size}_"
+                f"{filename}"
+            )
 
         if os.path.exists(cached_features_file) and not args.overwrite_cache:
             logger.info("Loading features from cached file %s", cached_features_file)
@@ -283,35 +293,51 @@ class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
             ]
 
             # obtain token ids and label ids for token discrimination loss
-            self.examples = []
-            self.labels = []
-            for token_id, jumbled_token_id in tqdm(
-                    zip(self.token_ids, self.jumbled_tokens_ids),
-                    total=len(self.token_ids),
-                    desc='labels'
-            ):
-                if len(token_id) == np.array(jumbled_token_id):
-                    self.examples.append(jumbled_token_id)
-                    self.labels.append(
-                        np.array(
-                            np.array(token_id) == np.array(jumbled_token_id),
-                            dtype=np.int
-                        ))
+            if not args.pos:
+                self.labels = []
+                for token_id, jumbled_token_id in tqdm(
+                        zip(self.token_ids, self.jumbled_tokens_ids),
+                        total=len(self.token_ids),
+                        desc='labels'
+                ):
+                    if len(token_id) == np.array(jumbled_token_id):
+                        self.examples.append(jumbled_token_id)
+                        self.labels.append(
+                            np.array(
+                                np.array(token_id) == np.array(jumbled_token_id),
+                                dtype=np.int
+                            ))
+            else:
+                self.examples = []
+                self.labels = []
+                for token_id, jumbled_token_id in tqdm(
+                        zip(self.token_ids, self.jumbled_tokens_ids),
+                        total=len(self.token_ids),
+                        desc='labels'
+                ):
+                    if len(token_id) == len(jumbled_token_id):
+                        self.examples.append(jumbled_token_id)
+                        self.labels.append(
+                            np.array(
+                                np.array(token_id) == np.array(jumbled_token_id),
+                                dtype=np.int
+                            ))
+                self.jumbled_tokens_ids = self.examples
 
             logger.info("Saving features into cached file %s", cached_features_file)
             with open(cached_features_file, "wb") as handle:
                 pickle.dump(
-                    [self.examples, self.labels],
+                    [self.jumbled_tokens_ids, self.labels],
                     handle,
                     protocol=pickle.HIGHEST_PROTOCOL
                 )
 
     def __len__(self):
-        return len(self.examples)
+        return len(self.jumbled_tokens_ids)
 
     def __getitem__(self, i):
         return (
-            torch.tensor(self.examples[i], dtype=torch.long),
+            torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
             torch.tensor(self.labels[i], dtype=torch.long)
         )
 
