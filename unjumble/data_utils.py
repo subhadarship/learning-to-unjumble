@@ -282,33 +282,36 @@ class LineByLineJumbledTextDatasetForTokenDiscrimination(Dataset):
                 tqdm(self.jumbled_tokens, desc='jumbled token ids')
             ]
 
-            # obtain label ids for token discrimination loss
+            # obtain token ids and label ids for token discrimination loss
+            self.examples = []
             self.labels = []
             for token_id, jumbled_token_id in tqdm(
                     zip(self.token_ids, self.jumbled_tokens_ids),
                     total=len(self.token_ids),
                     desc='labels'
             ):
-                self.labels.append(
-                    np.array(
-                        np.array(token_id) == np.array(jumbled_token_id),
-                        dtype=np.int
-                    ))
+                if len(token_id) == np.array(jumbled_token_id):
+                    self.examples.append(jumbled_token_id)
+                    self.labels.append(
+                        np.array(
+                            np.array(token_id) == np.array(jumbled_token_id),
+                            dtype=np.int
+                        ))
 
             logger.info("Saving features into cached file %s", cached_features_file)
             with open(cached_features_file, "wb") as handle:
                 pickle.dump(
-                    [self.jumbled_tokens_ids, self.labels],
+                    [self.examples, self.labels],
                     handle,
                     protocol=pickle.HIGHEST_PROTOCOL
                 )
 
     def __len__(self):
-        return len(self.jumbled_tokens_ids)
+        return len(self.examples)
 
     def __getitem__(self, i):
         return (
-            torch.tensor(self.jumbled_tokens_ids[i], dtype=torch.long),
+            torch.tensor(self.examples[i], dtype=torch.long),
             torch.tensor(self.labels[i], dtype=torch.long)
         )
 
