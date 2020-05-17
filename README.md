@@ -2,16 +2,41 @@
 
 learning to unjumble as a pretraining objective for RoBERTa
 
-## GLUE Tasks' Scores Using RoBERTa with Jumbled Token Discrimination Loss
+## GLUE Results Using RoBERTa with Jumbled Token Discrimination Loss
 
-#### jumbling probability = `0.15`, peak lr = `e-4`, steps = `1000`
-- Score on RTE task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb)
+#### jumbling probability = `0.15`, peak lr = `1e-4`, steps = `1000`
 - Score on QNLI task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/qnli.ipynb)
+- Score on RTE task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/rte.ipynb)
+- Score on CoLA task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/cola.ipynb)
+- Score on SST task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/sst-2.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/sst-2.ipynb)
+- Score on MRPC task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/mrpc.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/mrpc.ipynb)
 - Score on STS-B task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/sts-b.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/sts-b.ipynb)
+- Score on WNLI task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.15/wnli.ipynb)
+
+#### jumbling probability = `0.30`, peak lr = `1e-4`, steps = `1000`
+- Score on QNLI task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/qnli.ipynb)
+- Score on RTE task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/rte.ipynb)
+- Score on CoLA task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/cola.ipynb)
+- Score on SST task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/sst-2.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/sst-2.ipynb)
+- Score on MRPC task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/mrpc.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/mrpc.ipynb)
+- Score on STS-B task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/sts-b.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/sts-b.ipynb)
+- Score on WNLI task: see [`notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta_jumbled_token_discrimination_lr_e-4_prob_0.3/wnli.ipynb)
+
+## GLUE Results Using RoBERTa with Masked Token Discrimination Loss [BASELINE]
+
+#### masking probability = `0.15`, peak lr = `1e-4`, steps = `1000`
+- Score on QNLI task: see [`baseline/qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/qnli.ipynb)
+- Score on RTE task: see [`baseline/rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/rte.ipynb)
+- Score on CoLA task: see [`baseline/cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/cola.ipynb)
+- Score on SST task: see [`baseline/sst-2.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/sst-2.ipynb)
+- Score on MRPC task: see [`baseline/mrpc.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/mrpc.ipynb)
+- Score on STS-B task: see [`baseline/sts-b.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/sts-b.ipynb)
+- Score on WNLI task: see [`baseline/wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/baseline/wnli.ipynb)
 
 
-## Additional Scores
-### Pretrained RoBERTa GLUE Tasks' Scores
+## Additional GLUE Results
+
+### Pretrained RoBERTa
 - roberta score on QNLI task: see [`notebooks_roberta/roberta_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta/roberta_qnli.ipynb)
 - roberta score on RTE task: see [`notebooks_roberta/roberta_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta/roberta_rte.ipynb)
 - roberta score on CoLA task: see [`notebooks_roberta/roberta_cola.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_roberta/roberta_cola.ipynb)
@@ -20,7 +45,7 @@ learning to unjumble as a pretraining objective for RoBERTa
 - roberta score on STS-B task: see [`notebooks_roberta/Roberta_STS_B_Baseline.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks_GLUE/notebooks_roberta/Roberta_STS_B_Baseline.ipynb)
 - roberta score on WNLI task: see [`notebooks_roberta/roberta wnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/blob/master/notebooks_GLUE/notebooks_roberta/roberta%20wnli.ipynb)
 
-### Pretrained ELECTRA GLUE Tasks' Scores
+### Pretrained ELECTRA
 - electra score on QNLI task: see [`notebooks_electra/electra_qnli.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_electra/electra_qnli.ipynb)
 - electra score on RTE task: see [`notebooks_electra/electra_rte.ipynb`](https://github.com/subhadarship/learning-to-unjumble/tree/master/notebooks_GLUE/notebooks_electra/electra_rte.ipynb)
 
