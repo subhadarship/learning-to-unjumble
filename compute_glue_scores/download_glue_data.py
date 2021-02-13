@@ -90,7 +90,7 @@ def format_mrpc(data_dir, path_to_data):
     except:
         print("\tError downloading standard development IDs for MRPC. Manually splitting data...")
         df = pd.read_csv(mrpc_train_file, sep='\t', encoding='utf-8', error_bad_lines=False)
-        df_train, df_val = train_test_split(df, test_size=0.2, shuffle=True)
+        df_train, df_val = train_test_split(df, test_size=0.2, shuffle=True, random_state=123)
         df_val[['#1 ID', '#2 ID']].to_csv(
             os.path.join(mrpc_dir, 'dev_ids.tsv'),
             sep='\t', encoding='utf-8', index=False,
