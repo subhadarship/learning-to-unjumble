@@ -3,14 +3,14 @@
 cd ../compute_glue_scores
 echo "WORKING DIR: $PWD"
 
+SEEDS=$1
+
 # prepare glue data
 GLUE_DATA_DIR=../data/glue_data
-mkdir -p $GLUE_DATA_DIR
-python download_glue_data.py --data_dir ${GLUE_DATA_DIR} --tasks RTE,STS-B,WNLI,SST-2,QNLI,CoLA,MRPC
 
-for TASK in CoLA SST-2 QNLI RTE STS-B WNLI MRPC; do
-  for SEED in 100 200 300 400 500; do
-    for MODEL_NAME in roberta_tokdisc_p0.15 roberta_mlm roberta_tokdisc_p0.3; do
+for TASK in CoLA RTE STS-B WNLI MRPC SST-2 QNLI; do
+  for SEED in $SEEDS; do
+    for MODEL_NAME in roberta_tokdisc_p0.15; do
       MODEL_DIR=../models/${MODEL_NAME}
       OUTPUT_DIR=../models/${MODEL_NAME}_glue_${TASK}_seed{SEED}
       python run_glue.py \
